@@ -34,6 +34,20 @@ const Auth = () => {
       
       console.log("Checking email existence:", submittedEmail);
       
+      // First ensure database is set up before checking email
+      try {
+        console.log("Setting up database...");
+        const { error: setupError } = await supabase.functions.invoke('ensure-profiles-table');
+        if (setupError) {
+          console.error("Database setup error:", setupError);
+          throw new Error("System setup error. Please try again later.");
+        }
+        console.log("Database setup complete");
+      } catch (setupError: any) {
+        console.error("Database setup failed:", setupError);
+        throw new Error("System setup error. Please try again later.");
+      }
+      
       // Check if email exists in Supabase
       const emailExists = await checkEmailExists(submittedEmail);
       console.log("Final email exists determination:", emailExists);
