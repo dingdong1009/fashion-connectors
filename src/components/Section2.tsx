@@ -8,7 +8,7 @@ const Section2 = () => {
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div className="relative">
           <img
-            src="/lovable-uploads/3fe29703-7fc6-4f61-8efe-fcadf5075d9e.png"
+            src="https://www.prada.com/content/dam/pradanux/e-commerce/2025/02/Re-Nylon/Landing/Mosaic/2/Mosaic_landscape_DT.jpg"
             alt="Prada Re-Nylon Collection"
             className="h-full w-full object-cover"
           />
