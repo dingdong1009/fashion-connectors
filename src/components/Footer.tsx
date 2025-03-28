@@ -2,25 +2,8 @@
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { ArrowRight, Facebook, Instagram, Twitter, Youtube, TikTok } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-
-// Custom TikTok icon component
-const TikTokIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-  </svg>
-);
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -68,7 +51,7 @@ const Footer = () => {
               </svg>
             </Link>
             <Link to="#" aria-label="TikTok">
-              <TikTokIcon className="h-5 w-5" />
+              <TikTok className="h-5 w-5" />
             </Link>
           </div>
         </div>
