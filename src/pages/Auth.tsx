@@ -66,20 +66,15 @@ const Auth = () => {
       }));
       
       // Call the edge function to send the email with the code
-      const response = await fetch('/api/send-verification-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await supabase.functions.invoke('send-verification-email', {
+        body: {
           email,
           verificationCode
-        }),
+        },
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to send verification email');
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to send verification email');
       }
       
       toast({
