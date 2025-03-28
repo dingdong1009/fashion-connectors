@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -86,7 +87,7 @@ const Auth = () => {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 flex items-center justify-center py-16">
+      <main className="flex-1 flex items-center justify-center py-32"> {/* Increased padding from default to py-32 */}
         <div className="w-full max-w-md px-4">
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
