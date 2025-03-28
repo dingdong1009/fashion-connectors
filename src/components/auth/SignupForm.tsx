@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -43,7 +42,6 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
   const [phoneNumber, setPhoneNumber] = useState("");
   const [company, setCompany] = useState("");
   const [description, setDescription] = useState("");
-  const [title, setTitle] = useState<string>("mr");
   const [role, setRole] = useState<"brand" | "buyer">("buyer");
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,34 +59,18 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
     }
   }, []);
 
-  const ensureDbSetup = async () => {
-    try {
-      console.log("Ensuring database is set up properly...");
-      const { data, error } = await supabase.functions.invoke('ensure-profiles-table');
-      
-      if (error) {
-        console.error("Error calling ensure-profiles-table:", error);
-        console.error("Error details:", error.message, error.details);
-        toast({
-          title: "System setup error",
-          description: "There was an error setting up the database. Please try again later.",
-          variant: "destructive",
-        });
-        return false;
+  useEffect(() => {
+    const ensureProfilesTable = async () => {
+      try {
+        const response = await supabase.functions.invoke('create-profiles-table');
+        console.log("Profile table check response:", response);
+      } catch (error) {
+        console.error("Failed to check profiles table:", error);
       }
-      
-      console.log("Database setup response:", data);
-      return true;
-    } catch (error) {
-      console.error("Exception in ensureDbSetup:", error);
-      toast({
-        title: "System setup error",
-        description: "There was an error setting up the database. Please try again later.",
-        variant: "destructive",
-      });
-      return false;
-    }
-  };
+    };
+
+    ensureProfilesTable();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,13 +94,6 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
 
     try {
       setIsLoading(true);
-      
-      // First ensure the database is set up properly
-      const dbSetupComplete = await ensureDbSetup();
-      if (!dbSetupComplete) {
-        return;
-      }
-      
       const fullName = `${firstName} ${lastName}`;
       const fullPhoneNumber = phoneNumber ? `${countryCode}${phoneNumber}` : "";
       
@@ -129,8 +104,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
         fullName,
         company,
         fullPhoneNumber,
-        description,
-        title
+        description
       });
       
       await signUp(
@@ -149,9 +123,23 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
       });
     } catch (error: any) {
       console.error("Signup error:", error);
+      
+      let errorMessage = error.message || "An error occurred during sign up.";
+      
+      if (error.message && error.message.includes("user_role")) {
+        errorMessage = "There was an issue with the user role. Please try again or contact support.";
+        
+        try {
+          await supabase.functions.invoke('create-profiles-table');
+          errorMessage += " We've attempted to fix the issue. Please try again.";
+        } catch (fixError) {
+          console.error("Failed to fix profiles table:", fixError);
+        }
+      }
+      
       toast({
         title: "Error creating account",
-        description: error.message || "An error occurred during sign up.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -332,7 +320,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
               </div>
             </div>
             
-            <Select value={title} onValueChange={setTitle}>
+            <Select>
               <SelectTrigger className="py-6 text-base">
                 <SelectValue placeholder="Select title *" />
               </SelectTrigger>

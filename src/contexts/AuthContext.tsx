@@ -103,23 +103,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Checking if email exists:", email);
       
-      // Use signInWithOtp to check if email exists without signing in
-      const { error } = await supabase.auth.signInWithOtp({
+      // Try to sign in with an intentionally wrong password to see if the user exists
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        options: {
-          shouldCreateUser: false // Only works with existing users
-        }
+        password: "checking_if_user_exists_only"
       });
       
-      // If there's no error or the error message contains "User already registered",
-      // it means the user exists
-      if (!error || error.message.includes("User already registered")) {
-        console.log("Email exists check result: true");
-        return true;
+      if (error) {
+        const errorMessageLower = error.message.toLowerCase();
+        
+        if (errorMessageLower.includes("invalid login credentials") || 
+            errorMessageLower.includes("email not confirmed")) {
+          console.log("Email exists check result: true");
+          console.log("Error indicates user exists:", error.message);
+          return true;
+        }
+        
+        console.log("Email exists check result: false");
+        console.log("Error indicates user doesn't exist:", error.message);
+        return false;
       }
       
-      console.log("Email exists check result: false");
-      return false;
+      console.log("No error returned, user must exist");
+      return true;
     } catch (error) {
       console.error("Unexpected error checking email:", error);
       console.log("Defaulting to 'email does not exist' after error");
@@ -152,26 +158,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const ensureDbSetup = async () => {
-    try {
-      console.log("Ensuring database is set up...");
-      // Call the edge function to ensure the database is set up
-      const { data, error } = await supabase.functions.invoke('ensure-profiles-table');
-      
-      if (error) {
-        console.error("Error calling ensure-profiles-table:", error);
-        console.error("Error details:", error.message, error.details);
-        return false;
-      }
-      
-      console.log("Database setup response:", data);
-      return true;
-    } catch (error) {
-      console.error("Exception in ensureDbSetup:", error);
-      return false;
-    }
-  };
-
   const signUp = async (
     email: string, 
     password: string, 
@@ -186,13 +172,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log("Signing up user with role:", role);
       console.log("Full signup data:", { email, role, fullName, company, telephone, description });
       
-      // First ensure the database is set up
-      const dbSetupComplete = await ensureDbSetup();
-      if (!dbSetupComplete) {
-        throw new Error("Database setup issue. Please try again later.");
-      }
-      
-      // Proceed with signup
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -210,6 +189,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           message: error.message,
           status: error.status,
           name: error.name,
+        });
+        toast({
+          title: "Signup failed",
+          description: error.message,
+          variant: "destructive"
         });
         throw error;
       }

@@ -9,48 +9,24 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      profiles: {
-        Row: {
-          company: string | null
-          created_at: string | null
-          description: string | null
-          email: string
-          full_name: string | null
-          id: string
-          role: Database["public"]["Enums"]["user_role"]
-          telephone: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          company?: string | null
-          created_at?: string | null
-          description?: string | null
-          email: string
-          full_name?: string | null
-          id: string
-          role?: Database["public"]["Enums"]["user_role"]
-          telephone?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          company?: string | null
-          created_at?: string | null
-          description?: string | null
-          email?: string
-          full_name?: string | null
-          id?: string
-          role?: Database["public"]["Enums"]["user_role"]
-          telephone?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: {
+          user_id?: string
+        }
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
+      has_role: {
+        Args: {
+          required_role: Database["public"]["Enums"]["user_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       user_role: "admin" | "sales_manager" | "brand" | "buyer"
