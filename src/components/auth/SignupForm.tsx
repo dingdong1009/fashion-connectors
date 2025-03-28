@@ -63,11 +63,17 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
 
   const ensureDbSetup = async () => {
     try {
-      // Call the edge function to ensure the database is set up
+      console.log("Ensuring database is set up properly...");
       const { data, error } = await supabase.functions.invoke('ensure-profiles-table');
       
       if (error) {
         console.error("Error calling ensure-profiles-table:", error);
+        console.error("Error details:", error.message, error.details);
+        toast({
+          title: "System setup error",
+          description: "There was an error setting up the database. Please try again later.",
+          variant: "destructive",
+        });
         return false;
       }
       
@@ -75,6 +81,11 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
       return true;
     } catch (error) {
       console.error("Exception in ensureDbSetup:", error);
+      toast({
+        title: "System setup error",
+        description: "There was an error setting up the database. Please try again later.",
+        variant: "destructive",
+      });
       return false;
     }
   };
@@ -105,11 +116,6 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
       // First ensure the database is set up properly
       const dbSetupComplete = await ensureDbSetup();
       if (!dbSetupComplete) {
-        toast({
-          title: "System setup error",
-          description: "There was an error setting up the database. Please try again later.",
-          variant: "destructive",
-        });
         return;
       }
       

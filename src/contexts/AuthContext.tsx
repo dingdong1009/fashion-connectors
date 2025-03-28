@@ -154,11 +154,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const ensureDbSetup = async () => {
     try {
+      console.log("Ensuring database is set up...");
       // Call the edge function to ensure the database is set up
       const { data, error } = await supabase.functions.invoke('ensure-profiles-table');
       
       if (error) {
         console.error("Error calling ensure-profiles-table:", error);
+        console.error("Error details:", error.message, error.details);
         return false;
       }
       

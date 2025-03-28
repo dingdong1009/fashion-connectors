@@ -22,13 +22,14 @@ serve(async (req) => {
 
     console.log("Setting up user_role enum and profiles table...");
     
-    // Execute raw SQL to create the user_role enum and profiles table
-    const { error: setupError } = await supabase.rpc("setup_database");
+    // Execute the setup_database function to create enum and tables
+    const { data, error } = await supabase.rpc("setup_database");
     
-    if (setupError) {
-      console.error("Error setting up database:", setupError);
+    if (error) {
+      console.error("Error setting up database:", error);
+      console.error("Error details:", error.message, error.details);
       return new Response(
-        JSON.stringify({ error: "Failed to set up database: " + setupError.message }),
+        JSON.stringify({ error: "Failed to set up database: " + error.message }),
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
