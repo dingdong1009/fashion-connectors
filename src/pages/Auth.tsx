@@ -87,7 +87,7 @@ const Auth = () => {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 flex items-center justify-center py-24"> {/* Increased padding here from py-16 to py-24 */}
+      <main className="flex-1 flex items-center justify-center py-16">
         <div className="w-full max-w-md px-4">
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
