@@ -32,6 +32,7 @@ const Auth = () => {
       // Check if email exists in Supabase
       const emailExists = await checkEmailExists(submittedEmail);
       
+      // Set the step based on whether the email exists
       if (emailExists) {
         // User exists, go to login
         setStep("login");
@@ -39,6 +40,8 @@ const Auth = () => {
         // User doesn't exist, go to signup
         setStep("signup");
       }
+      
+      console.log("Email exists:", emailExists, "Setting step to:", emailExists ? "login" : "signup");
     } catch (error: any) {
       console.error("Error checking email:", error);
       toast({
