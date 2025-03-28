@@ -32,6 +32,7 @@ interface AuthContextType {
   ) => Promise<void>;
   signOut: () => Promise<void>;
   loading: boolean;
+  checkEmailExists: (email: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -92,6 +93,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error("Error in fetchUserProfile:", error);
       setProfile(null);
+    }
+  };
+
+  const checkEmailExists = async (email: string): Promise<boolean> => {
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false,
+        }
+      });
+      
+      // If there's an error that the user doesn't exist
+      if (error && error.message.includes("not found")) {
+        return false; // Email doesn't exist
+      }
+      
+      return true; // Email exists
+    } catch (error) {
+      console.error("Error checking email:", error);
+      throw error;
     }
   };
 
@@ -183,7 +205,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       signIn, 
       signUp, 
       signOut,
-      loading
+      loading,
+      checkEmailExists
     }}>
       {children}
     </AuthContext.Provider>
