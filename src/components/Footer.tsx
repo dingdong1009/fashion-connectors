@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
@@ -51,7 +52,7 @@ const Footer = () => {
   
   return (
     <footer className="bg-white border-t border-gray-200 py-12">
-      <div className="container mx-auto px-4 max-w-7xl">
+      <div className="container mx-auto px-4 max-w-[1481px]">
         {/* Main footer content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           {/* Newsletter section */}
