@@ -14,7 +14,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<"email" | "login" | "signup">("email");
-  const { user } = useAuth();
+  const { user, checkEmailExists } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -30,20 +30,14 @@ const Auth = () => {
       setEmail(submittedEmail);
       
       // Check if email exists in Supabase
-      const { data, error } = await supabase.auth.signInWithOtp({
-        email: submittedEmail,
-        options: {
-          shouldCreateUser: false,
-        }
-      });
+      const emailExists = await checkEmailExists(submittedEmail);
       
-      // If there's an error that the user doesn't exist
-      if (error && error.message.includes("not found")) {
-        // User doesn't exist, go to signup
-        setStep("signup");
-      } else {
+      if (emailExists) {
         // User exists, go to login
         setStep("login");
+      } else {
+        // User doesn't exist, go to signup
+        setStep("signup");
       }
     } catch (error: any) {
       console.error("Error checking email:", error);
