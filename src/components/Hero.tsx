@@ -11,7 +11,7 @@ interface HeroProps {
 
 const Hero = ({ title, subtitle, ctaText, ctaLink, bgImage }: HeroProps) => {
   return (
-    <div className="py-20 relative mx-auto w-full max-w-[1481px] h-[600px] bg-cover bg-center" 
+    <div className="relative mx-auto w-full max-w-[1481px] h-[600px] bg-cover bg-center" 
       style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="absolute inset-0 bg-black/20">

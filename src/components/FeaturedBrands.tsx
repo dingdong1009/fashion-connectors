@@ -28,7 +28,7 @@ const featuredBrands = [
 
 const FeaturedBrands = () => {
   return (
-    <section className="py-16">
+    <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4 max-w-[1481px]">
         <h2 className="text-3xl font-light mb-2">Featured Brands</h2>
         <p className="text-gray-600 mb-10">Discover exclusive collections from top fashion houses</p>
