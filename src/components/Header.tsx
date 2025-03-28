@@ -86,14 +86,13 @@ const Header = () => {
             
             <div className="flex items-center space-x-4">
               {/* Language selector */}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-xs font-medium hover:bg-transparent" 
+              <button 
+                className="relative group text-xs font-medium transition-colors duration-300 hover:text-gray-700 py-1 px-2"
                 onClick={toggleLanguage}
               >
                 {language === "EN" ? "EN" : "RU"}
-              </Button>
+                <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+              </button>
               
               {/* User account button */}
               <Button variant="ghost" size="icon" className="rounded-full hover:scale-105 transition-transform">
