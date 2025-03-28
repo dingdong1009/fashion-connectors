@@ -109,7 +109,7 @@ const Header = () => {
                 <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </button>
               
-              <Link to="/connect" className="relative group text-xs tracking-wider transition-all duration-300 ease-in-out hover:text-gray-700">
+              <Link to="/auth" className="relative group text-xs tracking-wider transition-all duration-300 ease-in-out hover:text-gray-700">
                 CONNECT
                 <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </Link>
