@@ -1,17 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import { Link } from "react-router-dom";
-import { LogIn, UserPlus } from "lucide-react";
-
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [language, setLanguage] = useState<"EN" | "RU">("EN");
@@ -24,11 +14,9 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
   const toggleLanguage = () => {
     setLanguage(prev => prev === "EN" ? "RU" : "EN");
   };
-  
   return <header className={`w-full fixed top-0 left-0 right-0 z-50 bg-background transition-all duration-300 ${isScrolled ? 'shadow-md' : ''}`}>
       <div className="mx-auto flex max-w-[1481px] flex-col border-b">
         {/* Top row with logo and user icon */}
@@ -95,28 +83,10 @@ const Header = () => {
                 <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </button>
               
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="relative group text-xs tracking-wider transition-all duration-300 ease-in-out hover:text-gray-700">
-                    CONNECT
-                    <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-40">
-                  <DropdownMenuItem asChild>
-                    <Link to="/auth?tab=signin" className="flex items-center gap-2 cursor-pointer">
-                      <LogIn className="h-4 w-4" />
-                      <span>Log In</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/auth?tab=signup" className="flex items-center gap-2 cursor-pointer">
-                      <UserPlus className="h-4 w-4" />
-                      <span>Register</span>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <a href="#" className="relative group text-xs tracking-wider transition-all duration-300 ease-in-out hover:text-gray-700">
+                CONNECT
+                <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+              </a>
             </div>
           </nav>
         </div>
