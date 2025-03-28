@@ -50,7 +50,7 @@ const Header = () => {
 
         {/* Bottom row with navigation */}
         <div className="mx-auto w-full max-w-[1481px] border-t">
-          <nav className="mx-auto flex max-w-[1481px] justify-start py-4 px-6">
+          <nav className="mx-auto flex max-w-[1481px] justify-start py-4">
             <ul className="flex space-x-8 text-xs">
               <li>
                 <a href="#" className="relative group hover:text-gray-700 transition-colors duration-200">
