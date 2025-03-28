@@ -3,6 +3,7 @@ import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TextSection from "@/components/TextSection";
+import { Button } from "@/components/ui/button";
 
 const Connect = () => {
   return (
