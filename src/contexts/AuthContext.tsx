@@ -11,6 +11,9 @@ interface Profile {
   email: string;
   full_name: string | null;
   role: UserRole;
+  company?: string | null;
+  telephone?: string | null;
+  description?: string | null;
 }
 
 interface AuthContextType {
@@ -18,7 +21,15 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, role?: UserRole, fullName?: string) => Promise<void>;
+  signUp: (
+    email: string, 
+    password: string, 
+    role?: UserRole, 
+    fullName?: string,
+    company?: string,
+    telephone?: string,
+    description?: string
+  ) => Promise<void>;
   signOut: () => Promise<void>;
   loading: boolean;
 }
@@ -104,7 +115,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     email: string, 
     password: string, 
     role: UserRole = "buyer", 
-    fullName: string = ""
+    fullName: string = "",
+    company: string = "",
+    telephone: string = "",
+    description: string = ""
   ) => {
     try {
       setLoading(true);
@@ -114,7 +128,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         options: {
           data: {
             full_name: fullName,
-            role: role
+            role: role,
+            company: company,
+            telephone: telephone,
+            description: description
           }
         }
       });

@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -15,6 +17,10 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [company, setCompany] = useState("");
+  const [telephone, setTelephone] = useState("");
+  const [description, setDescription] = useState("");
+  const [role, setRole] = useState<"brand" | "buyer">("buyer");
   const [isLoading, setIsLoading] = useState(false);
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
@@ -68,7 +74,7 @@ const Auth = () => {
 
     try {
       setIsLoading(true);
-      await signUp(email, password, "buyer", fullName);
+      await signUp(email, password, role, fullName, company, telephone, description);
       toast({
         title: "Success",
         description: "Your account has been created. Please check your email for a confirmation link.",
@@ -160,6 +166,25 @@ const Auth = () => {
                       />
                     </div>
                     <div className="space-y-2">
+                      <Label htmlFor="company">Company</Label>
+                      <Input
+                        id="company"
+                        value={company}
+                        onChange={(e) => setCompany(e.target.value)}
+                        placeholder="Your Company Name"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="telephone">Telephone</Label>
+                      <Input
+                        id="telephone"
+                        type="tel"
+                        value={telephone}
+                        onChange={(e) => setTelephone(e.target.value)}
+                        placeholder="+1 (123) 456-7890"
+                      />
+                    </div>
+                    <div className="space-y-2">
                       <Label htmlFor="email-signup">Email</Label>
                       <Input
                         id="email-signup"
@@ -179,6 +204,33 @@ const Auth = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea
+                        id="description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Tell us about yourself or your business"
+                        className="min-h-24"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Register as</Label>
+                      <RadioGroup 
+                        value={role} 
+                        onValueChange={(value) => setRole(value as "brand" | "buyer")}
+                        className="flex flex-col space-y-2 mt-2"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="brand" id="brand" />
+                          <Label htmlFor="brand" className="font-normal cursor-pointer">Brand</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="buyer" id="buyer" />
+                          <Label htmlFor="buyer" className="font-normal cursor-pointer">Buyer</Label>
+                        </div>
+                      </RadioGroup>
                     </div>
                   </CardContent>
                   <CardFooter>
