@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 const CallToAction = () => {
   return (
     <section className="py-20 bg-gray-900 text-white">
-      <div className="container mx-auto px-4 text-center">
+      <div className="container mx-auto px-4 text-center max-w-[1481px]">
         <h2 className="text-3xl font-light mb-4">Connect With Top Fashion Brands</h2>
         <p className="text-xl mb-8 max-w-2xl mx-auto">
           Join our platform to discover exclusive collections and connect directly with premium fashion brands worldwide.

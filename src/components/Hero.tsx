@@ -16,7 +16,7 @@ const Hero = ({ title, subtitle, ctaText, ctaLink, bgImage }: HeroProps) => {
       style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="absolute inset-0 bg-black/20">
-        <div className="container mx-auto h-full px-4">
+        <div className="container mx-auto h-full px-4 max-w-[1481px]">
           <div className="flex h-full flex-col justify-center text-white">
             <h2 className="mb-3 text-4xl font-light">{title}</h2>
             {subtitle && <p className="mb-6 text-xl">{subtitle}</p>}

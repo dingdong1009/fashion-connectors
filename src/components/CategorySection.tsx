@@ -27,7 +27,7 @@ const categories = [
 const CategorySection = () => {
   return (
     <section className="py-16">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 max-w-[1481px]">
         <h2 className="text-3xl font-light mb-2">Shop By Category</h2>
         <p className="text-gray-600 mb-10">Explore products across various fashion categories</p>
         

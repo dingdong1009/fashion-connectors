@@ -18,7 +18,7 @@ const Header = () => {
 
   return (
     <header className="border-b border-gray-200 py-4 px-6 md:px-12">
-      <div className="flex items-center justify-between">
+      <div className="container mx-auto max-w-[1481px] flex items-center justify-between">
         <div className="flex items-center">
           <Link to="/" className="mr-16">
             <h1 className="text-2xl font-bold uppercase tracking-wider">Fashion Connect</h1>
@@ -60,7 +60,7 @@ const Header = () => {
       </div>
       
       {isSearchOpen && (
-        <div className="mt-4 transition-all duration-300">
+        <div className="container mx-auto max-w-[1481px] mt-4 transition-all duration-300">
           <input
             type="text"
             placeholder="Search brands, products..."
