@@ -18,7 +18,7 @@ const EmailEntry = ({ onSubmit, isLoading }: EmailEntryProps) => {
   };
 
   return (
-    <div>
+    <div classname="relative">
       <h1 className="text-2xl font-semibold mb-4">Enter your email</h1>
       
       <form onSubmit={handleSubmit} className="space-y-6">
