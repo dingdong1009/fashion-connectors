@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
@@ -98,7 +97,7 @@ const Footer = () => {
           {/* Help section */}
           <div>
             <h3 className="text-sm font-bold uppercase mb-4">BRAUCHEN SIE HILFE?</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2 text-xs">
               <li><Link to="#" className="hover:underline">Rufen Sie uns an 00 800 800 77232</Link></li>
               <li><Link to="#" className="hover:underline">Schreiben Sie uns per WhatsApp</Link></li>
               <li><Link to="#" className="hover:underline">Kontakte</Link></li>
@@ -110,7 +109,7 @@ const Footer = () => {
           {/* Exclusive Services section */}
           <div>
             <h3 className="text-sm font-bold uppercase mb-4">EXKLUSIVE SERVICES</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2 text-xs">
               <li><Link to="#" className="hover:underline">Prada Services</Link></li>
               <li><Link to="#" className="hover:underline">Ihre Bestellung verfolgen</Link></li>
               <li><Link to="#" className="hover:underline">Rückgaben</Link></li>
@@ -120,7 +119,7 @@ const Footer = () => {
           {/* Company section */}
           <div>
             <h3 className="text-sm font-bold uppercase mb-4">UNTERNEHMEN</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2 text-xs">
               <li><Link to="#" className="hover:underline">Fondazione Prada</Link></li>
               <li><Link to="#" className="hover:underline">Prada Group</Link></li>
               <li><Link to="#" className="hover:underline">Luna Rossa</Link></li>
@@ -132,7 +131,7 @@ const Footer = () => {
           {/* Legal section */}
           <div>
             <h3 className="text-sm font-bold uppercase mb-4">RECHTLICHE BEDINGUNGEN</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2 text-xs">
               <li><Link to="#" className="hover:underline">Impressum</Link></li>
               <li><Link to="#" className="hover:underline">Datenschutzerklärung</Link></li>
               <li><Link to="#" className="hover:underline">Cookie-Richtlinie</Link></li>
