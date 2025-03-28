@@ -18,7 +18,7 @@ const EmailEntry = ({ onSubmit, isLoading }: EmailEntryProps) => {
   };
 
   return (
-    <div className="relative w-full flex justify-center mt-48">
+    <div className="relative w-full flex mt-48">
       <h1 className="text-2xl font-semibold mb-4">Enter your email</h1>
       
       <form onSubmit={handleSubmit} className="space-y-6">
