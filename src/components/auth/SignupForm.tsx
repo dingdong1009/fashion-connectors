@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -85,7 +84,6 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
       const fullName = `${firstName} ${lastName}`;
       const fullPhoneNumber = phoneNumber ? `${countryCode}${phoneNumber}` : "";
       
-      // Log the data being passed to signUp
       console.log("Signup data:", {
         email,
         password,
@@ -95,6 +93,21 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
         fullPhoneNumber,
         description
       });
+      
+      const { error: tableCheckError } = await supabase
+        .from('profiles')
+        .select('id')
+        .limit(1);
+      
+      if (tableCheckError) {
+        console.error("Profiles table check error:", tableCheckError);
+        toast({
+          title: "System error",
+          description: "There was an error with the database setup. Please try again later or contact support.",
+          variant: "destructive",
+        });
+        return;
+      }
       
       await signUp(
         email, 

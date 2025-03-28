@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -102,37 +103,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Checking if email exists:", email);
       
-      const { data: userData, error: userError } = await supabase.auth.admin
-        .getUserByEmail(email);
+      // Use signInWithOtp to check if email exists without signing in
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false // Only works with existing users
+        }
+      });
       
-      if (!userError && userData) {
-        console.log("User found directly:", userData);
+      // If there's no error or the error message contains "User already registered",
+      // it means the user exists
+      if (!error || error.message.includes("User already registered")) {
+        console.log("Email exists check result: true");
         return true;
       }
       
-      console.log("Using sign-in method to check email existence");
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password: "checking_if_user_exists_only"
-      });
-      
-      if (error) {
-        const errorMessageLower = error.message.toLowerCase();
-        
-        if (errorMessageLower.includes("invalid login credentials") || 
-            errorMessageLower.includes("email not confirmed")) {
-          console.log("Email exists check result: true");
-          console.log("Error indicates user exists:", error.message);
-          return true;
-        }
-        
-        console.log("Email exists check result: false");
-        console.log("Error indicates user doesn't exist:", error.message);
-        return false;
-      }
-      
-      console.log("No error returned, user must exist");
-      return true;
+      console.log("Email exists check result: false");
+      return false;
     } catch (error) {
       console.error("Unexpected error checking email:", error);
       console.log("Defaulting to 'email does not exist' after error");
@@ -179,6 +166,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log("Signing up user with role:", role);
       console.log("Full signup data:", { email, role, fullName, company, telephone, description });
       
+      // First check if the profiles table exists to prevent registration errors
+      const { error: tableCheckError } = await supabase
+        .from('profiles')
+        .select('id')
+        .limit(1);
+      
+      if (tableCheckError) {
+        console.error("Profiles table check error:", tableCheckError);
+        toast({
+          title: "Signup failed",
+          description: "Database setup issue. Please contact support.",
+          variant: "destructive"
+        });
+        throw new Error("Database setup issue. Please contact support.");
+      }
+      
+      // Proceed with signup
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
