@@ -15,10 +15,10 @@ const Header = () => {
   ];
 
   return (
-    <header className="border-b border-gray-200 py-4 px-6 md:px-12">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 py-4 px-6 md:px-12 shadow-sm transition-all duration-300">
       <div className="container mx-auto max-w-[1481px] flex items-center justify-between">
         <div className="flex items-center">
-          <Link to="/" className="mr-16">
+          <Link to="/" className="mr-16 transition-transform duration-300 hover:scale-105">
             <img 
               src="/lovable-uploads/1f168016-2a54-4e0e-86e3-5dff74b44f34.png" 
               alt="MoiLoi" 
@@ -32,7 +32,7 @@ const Header = () => {
                 <li key={item.label}>
                   <Link 
                     to={item.path} 
-                    className="text-xs uppercase tracking-wide hover:underline"
+                    className="text-xs uppercase tracking-wide relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-black after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left"
                   >
                     {item.label}
                   </Link>
@@ -43,7 +43,7 @@ const Header = () => {
         </div>
         
         <div className="flex items-center">
-          <Link to="/account" className="p-1">
+          <Link to="/account" className="p-1 transition-transform duration-300 hover:scale-110">
             <User size={20} />
           </Link>
         </div>

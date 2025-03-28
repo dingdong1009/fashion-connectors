@@ -35,27 +35,31 @@ const FeaturedBrands = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredBrands.map((brand) => (
-            <Card key={brand.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+            <Card key={brand.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <div 
-                className="h-64 w-full bg-cover bg-center" 
+                className="h-64 w-full bg-cover bg-center transform transition-transform duration-500 hover:scale-105" 
                 style={{ backgroundImage: `url(${brand.image})` }}
               />
               <CardHeader>
-                <CardTitle>{brand.name}</CardTitle>
+                <CardTitle className="group">
+                  <span className="relative inline-block after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-black after:origin-bottom-right after:transition-transform after:duration-300 group-hover:after:scale-x-100 group-hover:after:origin-bottom-left">
+                    {brand.name}
+                  </span>
+                </CardTitle>
                 <CardDescription>{brand.category}</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600">{brand.description}</p>
               </CardContent>
               <CardFooter>
-                <Button variant="outline" className="w-full">View Collection</Button>
+                <Button variant="outline" className="w-full transition-all duration-300 hover:bg-black hover:text-white">View Collection</Button>
               </CardFooter>
             </Card>
           ))}
         </div>
         
         <div className="text-center mt-12">
-          <Button variant="outline" className="mx-auto">
+          <Button variant="outline" className="mx-auto transition-all duration-300 hover:bg-black hover:text-white">
             Explore All Brands
           </Button>
         </div>
