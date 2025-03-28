@@ -79,7 +79,7 @@ const Auth = () => {
       
       toast({
         title: "Verification code sent",
-        description: "We've sent a verification code to your email.",
+        description: `We've sent a verification code to ${email}. Please check your inbox and spam folder.`,
       });
     } catch (error: any) {
       console.error("Error sending verification email:", error);

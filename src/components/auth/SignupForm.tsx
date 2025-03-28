@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Eye, EyeOff, Mail, RefreshCw } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SignupFormProps {
   email: string;
@@ -100,26 +101,33 @@ const SignupForm = ({ email, onEditEmail, verifyCode }: SignupFormProps) => {
   const handleResendCode = async () => {
     try {
       setIsLoading(true);
-      // Call the edge function to resend the verification code
-      const response = await fetch('/api/send-verification-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      
+      // Generate a new random 6-digit code
+      const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // Store the code temporarily in localStorage with an expiration time (10 minutes)
+      const expirationTime = new Date().getTime() + 10 * 60 * 1000; // 10 minutes in milliseconds
+      localStorage.setItem(`verification_${email}`, JSON.stringify({
+        code: newVerificationCode,
+        expires: expirationTime
+      }));
+      
+      // Call the edge function to send the email with the code
+      const response = await supabase.functions.invoke('send-verification-email', {
+        body: {
           email,
+          verificationCode: newVerificationCode,
           resend: true
-        }),
+        },
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to resend verification code');
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to resend verification code');
       }
       
       toast({
         title: "Code resent",
-        description: "We've sent a new verification code to your email.",
+        description: `We've sent a new verification code to ${email}. Please check your inbox and spam folder.`,
       });
     } catch (error: any) {
       toast({

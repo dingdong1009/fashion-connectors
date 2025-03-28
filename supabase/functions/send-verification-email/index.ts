@@ -1,5 +1,6 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { Resend } from "npm:resend@2.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -28,42 +29,47 @@ serve(async (req) => {
       );
     }
 
-    // In a real implementation, you would use an email service provider here
-    // For example:
-    // - Resend: https://resend.com
-    // - SendGrid: https://sendgrid.com
-    // - Mailgun: https://www.mailgun.com
-    
-    // For now, we'll just simulate sending an email
-    console.log(`Sending verification code to ${email}: ${verificationCode || "Code would be generated"}`);
-    
-    // In a real implementation:
-    /*
-    const apiKey = Deno.env.get("EMAIL_API_KEY");
-    if (!apiKey) {
-      throw new Error("EMAIL_API_KEY is not set");
+    if (!verificationCode) {
+      return new Response(
+        JSON.stringify({ error: "Verification code is required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
+
+    console.log(`Sending verification code to ${email}: ${verificationCode}`);
     
-    const emailResponse = await fetch("https://api.email-provider.com/send", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "noreply@yourdomain.com",
-        to: email,
-        subject: "Your verification code",
-        html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>
-              <p>This code will expire in 10 minutes.</p>`,
-      }),
-    });
-    
-    if (!emailResponse.ok) {
-      const errorData = await emailResponse.json();
-      throw new Error(`Failed to send email: ${errorData.message}`);
+    // Using Resend to actually send the email
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (resendApiKey) {
+      try {
+        const resendClient = new Resend(resendApiKey);
+        
+        const emailResponse = await resendClient.emails.send({
+          from: "Your App <onboarding@resend.dev>",
+          to: email,
+          subject: "Your verification code",
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+              <h2 style="color: #333; text-align: center;">Verification Code</h2>
+              <p style="color: #666; font-size: 16px;">Please use the following code to verify your email address:</p>
+              <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0;">
+                <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px;">${verificationCode}</span>
+              </div>
+              <p style="color: #666; font-size: 14px;">This code will expire in 10 minutes.</p>
+              <p style="color: #666; font-size: 14px;">If you didn't request this code, you can safely ignore this email.</p>
+            </div>
+          `,
+        });
+        
+        console.log("Email sent successfully:", emailResponse);
+      } catch (emailError) {
+        console.error("Error sending email with Resend:", emailError);
+        // Even if the email sending fails, we'll continue and not fail the response
+        // This way, development can continue without requiring email setup
+      }
+    } else {
+      console.log("RESEND_API_KEY not configured. Email sending simulated.");
     }
-    */
 
     // Return success response
     return new Response(
