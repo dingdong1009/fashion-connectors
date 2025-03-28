@@ -35,20 +35,22 @@ const Header = () => {
         </div>
         
         {/* Bottom row with navigation */}
-        <nav className="hidden lg:block">
-          <ul className="flex space-x-8 justify-center">
-            {menuItems.map((item) => (
-              <li key={item.label}>
-                <Link 
-                  to={item.path} 
-                  className="text-xs uppercase tracking-wide relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-black after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div className="mx-auto max-w-[1481px] w-full border-t border-gray-200">
+          <nav className="hidden lg:block pt-4">
+            <ul className="flex space-x-8 justify-center">
+              {menuItems.map((item) => (
+                <li key={item.label}>
+                  <Link 
+                    to={item.path} 
+                    className="text-xs uppercase tracking-wide relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-black after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </div>
     </header>
   );
