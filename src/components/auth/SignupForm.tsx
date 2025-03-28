@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -9,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Eye, EyeOff, Mail, RefreshCw } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { supabase } from "@/integrations/supabase/client";
+import { Textarea } from "@/components/ui/textarea";
 
 const ussrCountryCodes = [
   { code: "+7", name: "Russia" },
@@ -41,6 +43,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [company, setCompany] = useState("");
+  const [description, setDescription] = useState("");
   const [role, setRole] = useState<"brand" | "buyer">("buyer");
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -87,7 +90,8 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
         role,
         fullName,
         company,
-        phoneNumber
+        phoneNumber,
+        description // Pass the new description field
       );
       toast({
         title: "Account created",
@@ -255,6 +259,25 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
         
         {codeVerified && (
           <>
+            {/* Register as section moved to top */}
+            <div className="space-y-3">
+              <p className="font-medium">Register as</p>
+              <RadioGroup 
+                value={role} 
+                onValueChange={(value) => setRole(value as "brand" | "buyer")}
+                className="flex flex-col space-y-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="brand" id="brand" />
+                  <Label htmlFor="brand" className="font-normal cursor-pointer">Brand</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="buyer" id="buyer" />
+                  <Label htmlFor="buyer" className="font-normal cursor-pointer">Buyer</Label>
+                </div>
+              </RadioGroup>
+            </div>
+            
             <Select>
               <SelectTrigger className="py-6 text-base">
                 <SelectValue placeholder="Select title *" />
@@ -288,14 +311,14 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
             </div>
             
             <div className="flex">
-              <Select defaultValue="+7">
+              <Select defaultValue="+7" onValueChange={setCountryCode}>
                 <SelectTrigger className="rounded-r-none w-32 py-6">
                   <SelectValue placeholder="+7" />
                 </SelectTrigger>
                 <SelectContent>
                   {ussrCountryCodes.map((country) => (
                     <SelectItem key={`${country.code}-${country.name}`} value={country.code}>
-                      {country.code} {country.name}
+                      {country.code}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -316,6 +339,14 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               className="py-6 text-base"
+            />
+            
+            <Textarea
+              id="description"
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="py-2 text-base min-h-[100px]"
             />
             
             <div className="space-y-2 relative">
@@ -356,24 +387,6 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
                   concerning our brand and products.
                 </Label>
               </div>
-            </div>
-            
-            <div className="space-y-3">
-              <p className="font-medium">Register as</p>
-              <RadioGroup 
-                value={role} 
-                onValueChange={(value) => setRole(value as "brand" | "buyer")}
-                className="flex flex-col space-y-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="brand" id="brand" />
-                  <Label htmlFor="brand" className="font-normal cursor-pointer">Brand</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="buyer" id="buyer" />
-                  <Label htmlFor="buyer" className="font-normal cursor-pointer">Buyer</Label>
-                </div>
-              </RadioGroup>
             </div>
             
             <p className="text-sm">
