@@ -22,7 +22,13 @@ const Header = () => {
       <div className="mx-auto flex max-w-[1481px] flex-col border-b">
         {/* Top row with logo and user icon */}
         <div className="flex items-center justify-between py-8 px-6">
-          <h1 className="text-2xl font-light">MoiLoi</h1>
+          <div className="h-10">
+            <img 
+              src="/lovable-uploads/062d0258-dcd0-4f16-a095-956d0ec0e2d4.png" 
+              alt="MoiLoi Logo" 
+              className="h-full" 
+            />
+          </div>
           <Button variant="ghost" size="icon" className="rounded-full hover:scale-105 transition-transform">
             <svg
               xmlns="http://www.w3.org/2000/svg"
