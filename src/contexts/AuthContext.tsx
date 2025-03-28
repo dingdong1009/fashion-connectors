@@ -181,6 +181,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   ) => {
     try {
       setLoading(true);
+      console.log("Signing up user with role:", role);
       
       // Only include essential user data in auth metadata
       const { data, error } = await supabase.auth.signUp({
@@ -189,17 +190,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         options: {
           data: {
             full_name: fullName,
-            role
+            role: role
           }
         }
       });
       
       if (error) {
+        console.error("Signup error:", error);
         throw error;
       }
       
+      console.log("Signup successful:", data);
+      
       // After successful signup, update the profile table with additional data
       if (data.user) {
+        console.log("Updating profile for user:", data.user.id);
         const { error: profileError } = await supabase
           .from('profiles')
           .update({

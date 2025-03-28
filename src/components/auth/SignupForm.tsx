@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -82,20 +83,35 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
     try {
       setIsLoading(true);
       const fullName = `${firstName} ${lastName}`;
+      const fullPhoneNumber = phoneNumber ? `${countryCode}${phoneNumber}` : "";
+      
+      // Log the data being passed to signUp
+      console.log("Signup data:", {
+        email,
+        password,
+        role,
+        fullName,
+        company,
+        fullPhoneNumber,
+        description
+      });
+      
       await signUp(
         email, 
         password, 
         role,
         fullName,
         company,
-        phoneNumber,
+        fullPhoneNumber,
         description
       );
+      
       toast({
         title: "Account created",
         description: "Your account has been created successfully.",
       });
     } catch (error: any) {
+      console.error("Signup error:", error);
       toast({
         title: "Error creating account",
         description: error.message || "An error occurred during sign up.",
@@ -318,7 +334,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
                 </SelectTrigger>
                 <SelectContent>
                   {ussrCountryCodes.map((country) => (
-                    <SelectItem key={`${country.code}-${country.name}`} value={country.code}>
+                    <SelectItem key={country.code} value={country.code}>
                       {country.code}
                     </SelectItem>
                   ))}
