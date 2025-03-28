@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [language, setLanguage] = useState<"EN" | "RU">("EN");
+  const { user, profile } = useAuth();
 
   // Track scroll position to apply different styles for sticky header
   useEffect(() => {
@@ -32,6 +34,17 @@ const Header = () => {
             </Link>
           </div>
           
+          {user ? (
+            <Link to="/dashboard">
+              <Button variant="outline" className="rounded-full">
+                {profile?.full_name?.charAt(0) || profile?.email?.charAt(0) || 'U'}
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/auth">
+              <Button variant="outline">Sign In</Button>
+            </Link>
+          )}
         </div>
 
         {/* Bottom row with navigation */}
