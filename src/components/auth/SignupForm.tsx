@@ -7,16 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, Mail, RefreshCw } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface SignupFormProps {
   email: string;
   onEditEmail: () => void;
+  verifyCode: (code: string) => boolean;
 }
 
-const SignupForm = ({ email, onEditEmail }: SignupFormProps) => {
+const SignupForm = ({ email, onEditEmail, verifyCode }: SignupFormProps) => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState("");
@@ -26,11 +26,23 @@ const SignupForm = ({ email, onEditEmail }: SignupFormProps) => {
   const [role, setRole] = useState<"brand" | "buyer">("buyer");
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [codeVerified, setCodeVerified] = useState(false);
+  const [verificationError, setVerificationError] = useState("");
   const { signUp } = useAuth();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!codeVerified) {
+      toast({
+        title: "Verification required",
+        description: "Please verify your email with the code sent to your inbox.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     if (!email || !password || !firstName || !lastName) {
       toast({
         title: "Missing information",
@@ -59,6 +71,60 @@ const SignupForm = ({ email, onEditEmail }: SignupFormProps) => {
       toast({
         title: "Error creating account",
         description: error.message || "An error occurred during sign up.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyCode = () => {
+    if (verificationCode.trim() === "") {
+      setVerificationError("Please enter the verification code");
+      return;
+    }
+    
+    const isValid = verifyCode(verificationCode);
+    if (isValid) {
+      setCodeVerified(true);
+      setVerificationError("");
+      toast({
+        title: "Email verified",
+        description: "Your email has been successfully verified.",
+      });
+    } else {
+      setVerificationError("Invalid or expired code. Please try again.");
+    }
+  };
+
+  const handleResendCode = async () => {
+    try {
+      setIsLoading(true);
+      // Call the edge function to resend the verification code
+      const response = await fetch('/api/send-verification-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          resend: true
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to resend verification code');
+      }
+      
+      toast({
+        title: "Code resent",
+        description: "We've sent a new verification code to your email.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to resend verification code",
         variant: "destructive",
       });
     } finally {
@@ -96,150 +162,173 @@ const SignupForm = ({ email, onEditEmail }: SignupFormProps) => {
           <Input
             id="verification"
             placeholder="Verification code *"
-            className="pr-10 py-6 text-base"
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value)}
+            className={`pr-10 py-6 text-base ${verificationError ? "border-red-500" : ""}`}
+            disabled={codeVerified}
           />
           <button
             type="button"
+            onClick={handleResendCode}
             className="absolute right-3 top-1/2 -translate-y-1/2"
             aria-label="Resend code"
+            disabled={codeVerified || isLoading}
           >
-            <RefreshCw className="h-5 w-5" />
+            <RefreshCw className={`h-5 w-5 ${isLoading ? "animate-spin" : ""}`} />
           </button>
+          {verificationError && (
+            <p className="text-red-500 text-xs mt-1">{verificationError}</p>
+          )}
           <p className="text-xs mt-1">The code will expire in 10 minutes</p>
         </div>
         
-        <Select>
-          <SelectTrigger className="py-6 text-base">
-            <SelectValue placeholder="Select title *" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="mr">Mr.</SelectItem>
-            <SelectItem value="mrs">Mrs.</SelectItem>
-            <SelectItem value="ms">Ms.</SelectItem>
-            <SelectItem value="dr">Dr.</SelectItem>
-          </SelectContent>
-        </Select>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            id="firstName"
-            placeholder="First name *"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-            className="py-6 text-base"
-          />
-          
-          <Input
-            id="lastName"
-            placeholder="Last name *"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-            className="py-6 text-base"
-          />
-        </div>
-        
-        <div className="flex">
-          <Select defaultValue="+1">
-            <SelectTrigger className="rounded-r-none w-32 py-6">
-              <SelectValue placeholder="+1" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="+1">+1</SelectItem>
-              <SelectItem value="+44">+44</SelectItem>
-              <SelectItem value="+86">+86</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <Input
-            id="phone"
-            placeholder="Phone number (optional)"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            className="rounded-l-none py-6 text-base"
-          />
-        </div>
-        
-        <Input
-          id="company"
-          placeholder="Company name"
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          className="py-6 text-base"
-        />
-        
-        <div className="space-y-2 relative">
-          <div className="relative">
-            <Input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Password *"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="pr-10 py-6 text-base"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2"
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-            </button>
-          </div>
-          <p className="text-xs">The password must be composed of 8 to 16 characters</p>
-        </div>
-        
-        <div className="flex items-start space-x-2">
-          <Checkbox 
-            id="marketing" 
-            checked={marketingConsent} 
-            onCheckedChange={(checked) => setMarketingConsent(checked === true)}
-            className="mt-1"
-          />
-          <div>
-            <Label htmlFor="marketing" className="text-sm font-normal cursor-pointer">
-              I agree to receive (by email, phone and other forms of electronic
-              communication) commercial communications, including marketing
-              and promotional messages, newsletter, advertising and catalogues
-              concerning our brand and products.
-            </Label>
-          </div>
-        </div>
-        
-        <div className="space-y-3">
-          <p className="font-medium">Register as</p>
-          <RadioGroup 
-            value={role} 
-            onValueChange={(value) => setRole(value as "brand" | "buyer")}
-            className="flex flex-col space-y-2"
+        {!codeVerified && (
+          <Button 
+            type="button" 
+            onClick={handleVerifyCode}
+            className="w-full py-6 text-base bg-black hover:bg-gray-800"
+            disabled={isLoading}
           >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="brand" id="brand" />
-              <Label htmlFor="brand" className="font-normal cursor-pointer">Brand</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="buyer" id="buyer" />
-              <Label htmlFor="buyer" className="font-normal cursor-pointer">Buyer</Label>
-            </div>
-          </RadioGroup>
-        </div>
+            VERIFY CODE
+          </Button>
+        )}
         
-        <p className="text-sm">
-          By clicking on "Register", you confirm that you have read and
-          understood our Privacy Policy, you are over 16 years of age and that you
-          want to register.
-        </p>
-        
-        <Button 
-          type="submit" 
-          className="w-full py-6 text-base bg-black hover:bg-gray-800"
-          disabled={isLoading}
-        >
-          {isLoading ? "CREATING ACCOUNT..." : "REGISTER"}
-        </Button>
+        {codeVerified && (
+          <>
+            <Select>
+              <SelectTrigger className="py-6 text-base">
+                <SelectValue placeholder="Select title *" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="mr">Mr.</SelectItem>
+                <SelectItem value="mrs">Mrs.</SelectItem>
+                <SelectItem value="ms">Ms.</SelectItem>
+                <SelectItem value="dr">Dr.</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                id="firstName"
+                placeholder="First name *"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+                className="py-6 text-base"
+              />
+              
+              <Input
+                id="lastName"
+                placeholder="Last name *"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+                className="py-6 text-base"
+              />
+            </div>
+            
+            <div className="flex">
+              <Select defaultValue="+1">
+                <SelectTrigger className="rounded-r-none w-32 py-6">
+                  <SelectValue placeholder="+1" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="+1">+1</SelectItem>
+                  <SelectItem value="+44">+44</SelectItem>
+                  <SelectItem value="+86">+86</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Input
+                id="phone"
+                placeholder="Phone number (optional)"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="rounded-l-none py-6 text-base"
+              />
+            </div>
+            
+            <Input
+              id="company"
+              placeholder="Company name"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              className="py-6 text-base"
+            />
+            
+            <div className="space-y-2 relative">
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password *"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="pr-10 py-6 text-base"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              </div>
+              <p className="text-xs">The password must be composed of 8 to 16 characters</p>
+            </div>
+            
+            <div className="flex items-start space-x-2">
+              <Checkbox 
+                id="marketing" 
+                checked={marketingConsent} 
+                onCheckedChange={(checked) => setMarketingConsent(checked === true)}
+                className="mt-1"
+              />
+              <div>
+                <Label htmlFor="marketing" className="text-sm font-normal cursor-pointer">
+                  I agree to receive (by email, phone and other forms of electronic
+                  communication) commercial communications, including marketing
+                  and promotional messages, newsletter, advertising and catalogues
+                  concerning our brand and products.
+                </Label>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <p className="font-medium">Register as</p>
+              <RadioGroup 
+                value={role} 
+                onValueChange={(value) => setRole(value as "brand" | "buyer")}
+                className="flex flex-col space-y-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="brand" id="brand" />
+                  <Label htmlFor="brand" className="font-normal cursor-pointer">Brand</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="buyer" id="buyer" />
+                  <Label htmlFor="buyer" className="font-normal cursor-pointer">Buyer</Label>
+                </div>
+              </RadioGroup>
+            </div>
+            
+            <p className="text-sm">
+              By clicking on "Register", you confirm that you have read and
+              understood our Privacy Policy, you are over 16 years of age and that you
+              want to register.
+            </p>
+            
+            <Button 
+              type="submit" 
+              className="w-full py-6 text-base bg-black hover:bg-gray-800"
+              disabled={isLoading}
+            >
+              {isLoading ? "CREATING ACCOUNT..." : "REGISTER"}
+            </Button>
+          </>
+        )}
       </form>
     </div>
   );

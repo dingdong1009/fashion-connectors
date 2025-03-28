@@ -31,17 +31,16 @@ const Auth = () => {
       
       // Check if email exists in Supabase
       const emailExists = await checkEmailExists(submittedEmail);
+      console.log("Email exists check result:", emailExists);
       
-      // Set the step based on whether the email exists
       if (emailExists) {
         // User exists, go to login
         setStep("login");
       } else {
-        // User doesn't exist, go to signup
+        // User doesn't exist, send verification code and go to signup
+        await sendVerificationEmail(submittedEmail);
         setStep("signup");
       }
-      
-      console.log("Email exists:", emailExists, "Setting step to:", emailExists ? "login" : "signup");
     } catch (error: any) {
       console.error("Error checking email:", error);
       toast({
@@ -54,8 +53,68 @@ const Auth = () => {
     }
   };
 
+  const sendVerificationEmail = async (email: string) => {
+    try {
+      // Generate a random 6-digit code
+      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // Store the code temporarily in localStorage with an expiration time (10 minutes)
+      const expirationTime = new Date().getTime() + 10 * 60 * 1000; // 10 minutes in milliseconds
+      localStorage.setItem(`verification_${email}`, JSON.stringify({
+        code: verificationCode,
+        expires: expirationTime
+      }));
+      
+      // Call the edge function to send the email with the code
+      const response = await fetch('/api/send-verification-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          verificationCode
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to send verification email');
+      }
+      
+      toast({
+        title: "Verification code sent",
+        description: "We've sent a verification code to your email.",
+      });
+    } catch (error: any) {
+      console.error("Error sending verification email:", error);
+      toast({
+        title: "Error sending verification code",
+        description: error.message || "Failed to send verification email",
+        variant: "destructive",
+      });
+      // Continue to signup form even if email sending fails
+      setStep("signup");
+    }
+  };
+
   const handleEditEmail = () => {
     setStep("email");
+  };
+
+  const verifyCode = (enteredCode: string): boolean => {
+    const storedData = localStorage.getItem(`verification_${email}`);
+    if (!storedData) return false;
+    
+    const { code, expires } = JSON.parse(storedData);
+    const currentTime = new Date().getTime();
+    
+    // Check if code is valid and not expired
+    if (code === enteredCode && currentTime < expires) {
+      return true;
+    }
+    
+    return false;
   };
 
   return (
@@ -78,6 +137,7 @@ const Auth = () => {
             <SignupForm 
               email={email} 
               onEditEmail={handleEditEmail}
+              verifyCode={verifyCode}
             />
           )}
         </div>

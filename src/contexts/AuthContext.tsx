@@ -98,29 +98,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkEmailExists = async (email: string): Promise<boolean> => {
     try {
-      // We need to check directly with Supabase API if this email exists
+      console.log("Checking if email exists:", email);
+      
+      // First, try to get user by email (admin-only in Supabase)
+      // For non-admin clients, we'll use a sign-in attempt to check
       const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          shouldCreateUser: false,
+          shouldCreateUser: false, // Don't create user if they don't exist
         }
       });
       
       console.log("Email check response:", data, error);
       
-      // If there's an error with a message about the user not being found
-      if (error && (
-        error.message.includes("not found") || 
-        error.message.includes("user not found") ||
-        error.message.toLowerCase().includes("no user found")
-      )) {
-        console.log("Email doesn't exist:", email);
-        return false; // Email doesn't exist
+      // If there's an error with a specific message about user not found
+      // or if the error is about OTP being disabled, we need to check the error type
+      
+      if (error) {
+        if (error.message.includes("not found") || 
+            error.message.toLowerCase().includes("user not found") ||
+            error.message.toLowerCase().includes("user doesn't exist")) {
+          console.log("Email doesn't exist based on error message:", email);
+          return false;
+        }
+        
+        // For OTP disabled errors, we need to check for a more specific status code
+        if (error.status === 422 && error.message.includes("otp_disabled")) {
+          // This means OTP is disabled, but we still need to know if the user exists
+          
+          // If OTP is disabled but the user exists, we typically get a successful response
+          // or a different error message. Otherwise, we'd get a specific "user not found" error.
+          // Let's try to sign in with a fake password to see if the user exists
+          
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password: "this_is_definitely_not_the_password" // Fake password to force an error
+          });
+          
+          if (signInError) {
+            // If error says "Invalid login credentials", it means user exists but password is wrong
+            // If error says "User not found" or similar, user doesn't exist
+            const userExists = signInError.message.includes("Invalid login credentials");
+            console.log("Email exists (password check):", userExists, email);
+            return userExists;
+          }
+        }
       }
       
-      // If there's no error or it's a different type of error, assume the email exists
-      console.log("Email exists or couldn't determine:", email);
-      return !error; // Email exists if no error
+      // If we got here without returning, assume the email exists
+      console.log("Email likely exists (default case):", email);
+      return false; // Default to false since our checks didn't conclusively find the user
     } catch (error) {
       console.error("Error checking email:", error);
       throw error;
