@@ -21,7 +21,11 @@ const Header = () => {
       <div className="container mx-auto max-w-[1481px] flex items-center justify-between">
         <div className="flex items-center">
           <Link to="/" className="mr-16">
-            <h1 className="text-2xl font-bold uppercase tracking-wider">Fashion Connect</h1>
+            <img 
+              src="/lovable-uploads/1f168016-2a54-4e0e-86e3-5dff74b44f34.png" 
+              alt="MoiLoi" 
+              className="h-10"
+            />
           </Link>
           
           <nav className="hidden lg:block">
