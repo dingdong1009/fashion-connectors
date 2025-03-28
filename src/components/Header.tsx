@@ -1,8 +1,6 @@
 
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -24,7 +22,8 @@ const Header = () => {
     setLanguage(prev => prev === "EN" ? "RU" : "EN");
   };
 
-  return <header className={`w-full fixed top-0 left-0 right-0 z-50 bg-background transition-all duration-300 ${isScrolled ? 'shadow-md' : ''}`}>
+  return (
+    <header className={`w-full fixed top-0 left-0 right-0 z-50 bg-background transition-all duration-300 ${isScrolled ? 'shadow-md' : ''}`}>
       <div className="mx-auto flex max-w-[1481px] flex-col border-b">
         {/* Top row with logo and user icon */}
         <div className="flex items-center justify-between py-8">
@@ -100,12 +99,7 @@ const Header = () => {
                 onClick={toggleLanguage}
                 className="relative group text-xs tracking-wider px-2 transition-all duration-300 ease-in-out hover:text-gray-700"
               >
-                <span className={`transition-opacity duration-300 ease-in-out ${language === "EN" ? "opacity-100" : "opacity-0 absolute"}`}>
-                  EN
-                </span>
-                <span className={`transition-opacity duration-300 ease-in-out ${language === "RU" ? "opacity-100" : "opacity-0 absolute"}`}>
-                  RU
-                </span>
+                {language === "EN" ? "EN" : "RU"}
                 <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </button>
               
@@ -117,6 +111,8 @@ const Header = () => {
           </nav>
         </div>
       </div>
-    </header>;
+    </header>
+  );
 };
+
 export default Header;
