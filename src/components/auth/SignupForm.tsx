@@ -10,6 +10,23 @@ import { Eye, EyeOff, Mail, RefreshCw } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { supabase } from "@/integrations/supabase/client";
 
+const ussrCountryCodes = [
+  { code: "+7", name: "Russia" },
+  { code: "+375", name: "Belarus" },
+  { code: "+374", name: "Armenia" },
+  { code: "+994", name: "Azerbaijan" },
+  { code: "+995", name: "Georgia" },
+  { code: "+7", name: "Kazakhstan" },
+  { code: "+996", name: "Kyrgyzstan" },
+  { code: "+371", name: "Latvia" },
+  { code: "+370", name: "Lithuania" },
+  { code: "+373", name: "Moldova" },
+  { code: "+992", name: "Tajikistan" },
+  { code: "+993", name: "Turkmenistan" },
+  { code: "+998", name: "Uzbekistan" },
+  { code: "+372", name: "Estonia" }
+];
+
 interface SignupFormProps {
   email: string;
   onEditEmail: () => void;
@@ -30,6 +47,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
   const [verificationCode, setVerificationCode] = useState("");
   const [codeVerified, setCodeVerified] = useState(false);
   const [verificationError, setVerificationError] = useState("");
+  const [countryCode, setCountryCode] = useState("+7");
   const { signUp } = useAuth();
   const { toast } = useToast();
   const verificationInputRef = useRef<HTMLInputElement>(null);
@@ -270,14 +288,16 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
             </div>
             
             <div className="flex">
-              <Select defaultValue="+1">
+              <Select defaultValue="+7">
                 <SelectTrigger className="rounded-r-none w-32 py-6">
-                  <SelectValue placeholder="+1" />
+                  <SelectValue placeholder="+7" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="+1">+1</SelectItem>
-                  <SelectItem value="+44">+44</SelectItem>
-                  <SelectItem value="+86">+86</SelectItem>
+                  {ussrCountryCodes.map((country) => (
+                    <SelectItem key={`${country.code}-${country.name}`} value={country.code}>
+                      {country.code} {country.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               
