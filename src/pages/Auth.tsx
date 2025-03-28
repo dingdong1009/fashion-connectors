@@ -14,6 +14,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<"email" | "login" | "signup">("email");
+  const [currentVerificationCode, setCurrentVerificationCode] = useState<string>("");
   const { user, checkEmailExists } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -38,7 +39,8 @@ const Auth = () => {
         setStep("login");
       } else {
         // User doesn't exist, send verification code and go directly to signup
-        await sendVerificationEmail(submittedEmail);
+        const verificationCode = await sendVerificationEmail(submittedEmail);
+        setCurrentVerificationCode(verificationCode);
         setStep("signup");
       }
     } catch (error: any) {
@@ -53,7 +55,7 @@ const Auth = () => {
     }
   };
 
-  const sendVerificationEmail = async (email: string) => {
+  const sendVerificationEmail = async (email: string): Promise<string> => {
     try {
       // Generate a random 6-digit code
       const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -81,6 +83,8 @@ const Auth = () => {
         title: "Verification code sent",
         description: `We've sent a verification code to ${email}. Please check your inbox and spam folder.`,
       });
+
+      return verificationCode;
     } catch (error: any) {
       console.error("Error sending verification email:", error);
       toast({
@@ -89,7 +93,7 @@ const Auth = () => {
         variant: "destructive",
       });
       // Continue to signup form even if email sending fails
-      setStep("signup");
+      return "";
     }
   };
 
@@ -133,6 +137,7 @@ const Auth = () => {
               email={email} 
               onEditEmail={handleEditEmail}
               verifyCode={verifyCode}
+              testCode={currentVerificationCode}
             />
           )}
         </div>

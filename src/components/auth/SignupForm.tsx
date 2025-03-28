@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -15,9 +14,10 @@ interface SignupFormProps {
   email: string;
   onEditEmail: () => void;
   verifyCode: (code: string) => boolean;
+  testCode?: string;
 }
 
-const SignupForm = ({ email, onEditEmail, verifyCode }: SignupFormProps) => {
+const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProps) => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState("");
@@ -34,7 +34,6 @@ const SignupForm = ({ email, onEditEmail, verifyCode }: SignupFormProps) => {
   const { toast } = useToast();
   const verificationInputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-focus on the verification code input when component mounts
   useEffect(() => {
     if (verificationInputRef.current) {
       verificationInputRef.current.focus();
@@ -110,17 +109,14 @@ const SignupForm = ({ email, onEditEmail, verifyCode }: SignupFormProps) => {
     try {
       setIsLoading(true);
       
-      // Generate a new random 6-digit code
       const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
       
-      // Store the code temporarily in localStorage with an expiration time (10 minutes)
-      const expirationTime = new Date().getTime() + 10 * 60 * 1000; // 10 minutes in milliseconds
+      const expirationTime = new Date().getTime() + 10 * 60 * 1000;
       localStorage.setItem(`verification_${email}`, JSON.stringify({
         code: newVerificationCode,
         expires: expirationTime
       }));
       
-      // Call the edge function to send the email with the code
       const response = await supabase.functions.invoke('send-verification-email', {
         body: {
           email,
@@ -148,12 +144,10 @@ const SignupForm = ({ email, onEditEmail, verifyCode }: SignupFormProps) => {
     }
   };
 
-  // Auto-verify the code when it reaches 6 digits
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const code = e.target.value;
     setVerificationCode(code);
     
-    // When the code is 6 digits long, automatically try to verify it
     if (code.length === 6 && !codeVerified) {
       const isValid = verifyCode(code);
       if (isValid) {
@@ -182,6 +176,15 @@ const SignupForm = ({ email, onEditEmail, verifyCode }: SignupFormProps) => {
           <div className="flex-1">
             <p className="text-sm mb-1">We've sent a verification code to</p>
             <p className="font-medium">{email}</p>
+            {testCode && (
+              <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-md">
+                <p className="text-sm text-yellow-800 font-medium">Test mode: Your verification code is</p>
+                <p className="text-lg font-bold text-yellow-700">{testCode}</p>
+                <p className="text-xs text-yellow-600 mt-1">
+                  This is shown for testing only. In production, you would receive this code via email.
+                </p>
+              </div>
+            )}
           </div>
           <button 
             onClick={onEditEmail}

@@ -75,7 +75,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: resend ? "Verification code resent" : "Verification code sent" 
+        message: resend ? "Verification code resent" : "Verification code sent",
+        emailSent: !!resendApiKey
       }),
       { 
         status: 200, 
