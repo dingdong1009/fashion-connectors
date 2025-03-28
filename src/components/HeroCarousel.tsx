@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 
 const HeroCarousel = () => {
   return (
-    <div className="relative w-full flex justify-center">
+    <div className="relative w-full flex justify-center mt-8">
       <Carousel className="w-full max-w-[1481px]">
         <CarouselContent>
           <CarouselItem>
