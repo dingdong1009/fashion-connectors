@@ -44,9 +44,9 @@ const EmailEntry = ({ onSubmit, isLoading }: EmailEntryProps) => {
       </form>
       
       <div className="mt-12 pt-12 border-t border-gray-200">
-        <p className="text-lg font-medium mb-6">Enjoy a unique shopping experience with your personal account</p>
+        <p className="text-lg font-sm mb-6">Enjoy a unique shopping experience with your personal account</p>
         
-        <div className="space-y-6">
+        <div className="space-y-6" font-xs>
           <div className="flex items-center gap-4">
             <ShoppingBag className="w-5 h-5" />
             <p>Check the details and monitor the status of your orders and returns</p>
