@@ -35,19 +35,22 @@ const Auth = () => {
       console.log("Checking email existence:", submittedEmail);
       
       // Check if email exists in Supabase
-      const emailExists = await checkEmailExists(submittedEmail);
-      console.log("Email exists check result:", emailExists);
+      const result = await checkEmailExists(submittedEmail);
+      console.log("Email exists check result:", result);
       
-      if (emailExists) {
+      if (result === true) {
         // User exists, go to login
         console.log("User exists, moving to login step");
         setStep("login");
-      } else {
-        // User doesn't exist, send verification code and go directly to signup
+      } else if (result === false) {
+        // User doesn't exist, send verification code and go to signup
         console.log("User doesn't exist, sending verification code");
         const verificationCode = await sendVerificationEmail(submittedEmail);
         setCurrentVerificationCode(verificationCode);
         setStep("signup");
+      } else {
+        // Error occurred during check
+        throw new Error("Could not verify email existence. Please try again.");
       }
     } catch (error: any) {
       console.error("Error checking email:", error);

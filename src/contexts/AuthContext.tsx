@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -47,7 +46,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
         console.log("Auth state changed:", event, currentSession?.user?.id);
@@ -55,7 +53,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(currentSession?.user ?? null);
         
         if (currentSession?.user) {
-          // Fetch user profile when session changes
           fetchUserProfile(currentSession.user.id);
         } else {
           setProfile(null);
@@ -63,7 +60,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    // Check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       console.log("Initial session check:", currentSession?.user?.id);
       setSession(currentSession);
@@ -106,26 +102,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Checking if email exists:", email);
       
-      // Try a fake password sign-in to see if user exists
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password: "checking_if_user_exists_only"
       });
       
-      if (signInError) {
-        // If error says "Invalid login credentials", it means user exists but password is wrong
-        // If error says "User not found" or similar, user doesn't exist
-        const userExists = signInError.message.includes("Invalid login credentials");
+      if (error) {
+        const errorMessageLower = error.message.toLowerCase();
+        const userExists = 
+          errorMessageLower.includes("invalid login credentials") || 
+          errorMessageLower.includes("email not confirmed");
+        
         console.log("Email exists check result:", userExists);
-        console.log("Error message:", signInError.message);
+        console.log("Error message:", error.message);
         return userExists;
       }
       
-      // If no error (unlikely in this case), user must exist
+      console.log("No error returned, user must exist");
       return true;
     } catch (error) {
-      console.error("Error checking email:", error);
-      return false;
+      console.error("Unexpected error checking email:", error);
+      throw new Error("Failed to check if email exists. Please try again.");
     }
   };
 
@@ -168,7 +165,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log("Signing up user with role:", role);
       console.log("Full signup data:", { email, role, fullName, company, telephone, description });
       
-      // First, check if we can create the user in auth system
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -198,8 +194,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log("Signup auth response:", data);
       console.log("Signup successful, user created:", data.user?.id);
       
-      // The database trigger should auto-create the profile,
-      // but let's manually update additional profile fields
       if (data.user) {
         try {
           console.log("Updating additional profile fields");
@@ -240,7 +234,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error("Error signing up:", error.message);
       console.error("Full error object:", error);
       
-      // Additional error reporting for debugging
       if (error.status) {
         console.error("Error status:", error.status);
       }
