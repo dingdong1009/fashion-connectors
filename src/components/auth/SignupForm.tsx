@@ -67,7 +67,7 @@ const SignupForm = ({ email, onEditEmail }: SignupFormProps) => {
   };
 
   return (
-    <div className="relative w-full justify-center mt-48">
+    <div className="relative w-full justify-center mt-28">
       <h1 className="text-2xl font-semibold mb-2">Create your personal account</h1>
       <p className="text-base mb-6">
         You are about to create your account. This will allow us to offer you a personalised and tailored experience both online and in-store.
