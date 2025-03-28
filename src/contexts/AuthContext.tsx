@@ -122,23 +122,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   ) => {
     try {
       setLoading(true);
-      // Make sure we're passing the correct metadata structure 
+      // Store all user metadata in a simplified format
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             full_name: fullName,
-            role: role,
-            company: company,
-            telephone: telephone,
-            description: description
+            role
           }
         }
       });
       
       if (error) {
         throw error;
+      }
+      
+      // After successful signup and if we have additional profile data,
+      // we'll update the profile separately to store company, telephone, and description
+      if (!error && (company || telephone || description)) {
+        try {
+          // We may need to wait a moment for the auth user to be available
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          if (user) {
+            const { error: updateError } = await supabase
+              .from('profiles')
+              .update({
+                company,
+                telephone,
+                description
+              })
+              .eq('id', user.id);
+              
+            if (updateError) {
+              console.error("Error updating additional profile fields:", updateError);
+            }
+          }
+        } catch (profileError) {
+          console.error("Error in profile update after signup:", profileError);
+          // Don't throw this error as signup was successful
+        }
       }
     } catch (error: any) {
       console.error("Error signing up:", error.message);
