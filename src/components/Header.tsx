@@ -1,7 +1,10 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
+import { Link } from "react-router-dom";
+
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [language, setLanguage] = useState<"EN" | "RU">("EN");
@@ -14,9 +17,11 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  
   const toggleLanguage = () => {
     setLanguage(prev => prev === "EN" ? "RU" : "EN");
   };
+  
   return <header className={`w-full fixed top-0 left-0 right-0 z-50 bg-background transition-all duration-300 ${isScrolled ? 'shadow-md' : ''}`}>
       <div className="mx-auto flex max-w-[1481px] flex-col border-b">
         {/* Top row with logo and user icon */}
@@ -83,10 +88,10 @@ const Header = () => {
                 <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </button>
               
-              <a href="#" className="relative group text-xs tracking-wider transition-all duration-300 ease-in-out hover:text-gray-700">
+              <Link to="/auth" className="relative group text-xs tracking-wider transition-all duration-300 ease-in-out hover:text-gray-700">
                 CONNECT
                 <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-              </a>
+              </Link>
             </div>
           </nav>
         </div>
