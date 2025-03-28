@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-5">
           {/* Newsletter */}
           <div className="md:col-span-1">
-            <h3 className="text-xs font-bold uppercase">Newsletter/h3>
+            <h3 className="text-xs font-bold uppercase">Unseren Newsletter erhalten</h3>
             <div className="mt-4 flex">
               <input 
                 type="email" 
@@ -33,12 +33,15 @@ const Footer = () => {
               </button>
             </div>
             <p className="mt-2 text-xs">
-              Register to our newsletter to receive exciting announcements.
+              Indem Sie auf "Anmelden" klicken, bestätigen Sie, dass Sie unsere
+              Datenschutzerklärung gelesen und verstanden haben und dass Sie den
+              Newsletter und andere Marketingmitteilungen, die darin beschrieben
+              sind, erhalten möchten.
             </p>
 
             {/* Social Icons */}
             <div className="mt-4 flex space-x-4">
-              <a href="#" aria-label="Telegram">
+              <a href="#" aria-label="Facebook">
                 <svg width="20" height="20" viewBox="0 0 24 24">
                   <path 
                     fill="currentColor" 
@@ -46,7 +49,7 @@ const Footer = () => {
                   />
                 </svg>
               </a>
-              <a href="#" aria-label="Vkontakt">
+              <a href="#" aria-label="Twitter">
                 <svg width="20" height="20" viewBox="0 0 24 24">
                   <path 
                     fill="currentColor" 
