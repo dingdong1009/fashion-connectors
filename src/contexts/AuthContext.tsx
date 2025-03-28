@@ -122,8 +122,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   ) => {
     try {
       setLoading(true);
-      // Store all user metadata in a simplified format
-      const { error } = await supabase.auth.signUp({
+      
+      // Only include essential user data in auth metadata
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -138,30 +139,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw error;
       }
       
-      // After successful signup and if we have additional profile data,
-      // we'll update the profile separately to store company, telephone, and description
-      if (!error && (company || telephone || description)) {
-        try {
-          // We may need to wait a moment for the auth user to be available
-          const { data: { user } } = await supabase.auth.getUser();
-          
-          if (user) {
-            const { error: updateError } = await supabase
-              .from('profiles')
-              .update({
-                company,
-                telephone,
-                description
-              })
-              .eq('id', user.id);
-              
-            if (updateError) {
-              console.error("Error updating additional profile fields:", updateError);
-            }
-          }
-        } catch (profileError) {
-          console.error("Error in profile update after signup:", profileError);
-          // Don't throw this error as signup was successful
+      // After successful signup, update the profile table with additional data
+      if (data.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            company,
+            telephone,
+            description
+          })
+          .eq('id', data.user.id);
+        
+        if (profileError) {
+          console.error("Error updating profile fields:", profileError);
+          // Don't throw here as the signup itself was successful
         }
       }
     } catch (error: any) {
