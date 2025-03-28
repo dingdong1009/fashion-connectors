@@ -10,8 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Eye, EyeOff, Mail, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Textarea } from "@/components/ui/textarea";
-import { useForm } from "react-hook-form";
-import { Form, FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
 
 const ussrCountryCodes = [
   { code: "+7", name: "Russia" },
@@ -19,7 +17,7 @@ const ussrCountryCodes = [
   { code: "+374", name: "Armenia" },
   { code: "+994", name: "Azerbaijan" },
   { code: "+995", name: "Georgia" },
-  { code: "+7 7", name: "Kazakhstan", key: "kz" },
+  { code: "+7 7", name: "Kazakhstan" },
   { code: "+996", name: "Kyrgyzstan" },
   { code: "+371", name: "Latvia" },
   { code: "+370", name: "Lithuania" },
@@ -87,7 +85,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
       const fullName = `${firstName} ${lastName}`;
       const fullPhoneNumber = phoneNumber ? `${countryCode}${phoneNumber}` : "";
       
-      // Log the data being passed to signUp for debugging
+      // Log the data being passed to signUp
       console.log("Signup data:", {
         email,
         password,
@@ -241,24 +239,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
             id="verification"
             placeholder="Verification code *"
             value={verificationCode}
-            onChange={(e) => {
-              const code = e.target.value;
-              setVerificationCode(code);
-              
-              if (code.length === 6 && !codeVerified) {
-                const isValid = verifyCode(code);
-                if (isValid) {
-                  setCodeVerified(true);
-                  setVerificationError("");
-                  toast({
-                    title: "Email verified",
-                    description: "Your email has been successfully verified.",
-                  });
-                } else {
-                  setVerificationError("Invalid or expired code. Please try again.");
-                }
-              }
-            }}
+            onChange={handleCodeChange}
             className={`pr-10 py-6 text-base ${verificationError ? "border-red-500" : ""}`}
             disabled={codeVerified}
             ref={verificationInputRef}
@@ -266,44 +247,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
           />
           <button
             type="button"
-            onClick={async () => {
-              try {
-                setIsLoading(true);
-                
-                const newVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-                
-                const expirationTime = new Date().getTime() + 10 * 60 * 1000;
-                localStorage.setItem(`verification_${email}`, JSON.stringify({
-                  code: newVerificationCode,
-                  expires: expirationTime
-                }));
-                
-                const response = await supabase.functions.invoke('send-verification-email', {
-                  body: {
-                    email,
-                    verificationCode: newVerificationCode,
-                    resend: true
-                  },
-                });
-                
-                if (response.error) {
-                  throw new Error(response.error.message || 'Failed to resend verification code');
-                }
-                
-                toast({
-                  title: "Code resent",
-                  description: `We've sent a new verification code to ${email}. Please check your inbox and spam folder.`,
-                });
-              } catch (error: any) {
-                toast({
-                  title: "Error",
-                  description: error.message || "Failed to resend verification code",
-                  variant: "destructive",
-                });
-              } finally {
-                setIsLoading(false);
-              }
-            }}
+            onClick={handleResendCode}
             className="absolute right-3 top-1/2 -translate-y-1/2"
             aria-label="Resend code"
             disabled={codeVerified || isLoading}
@@ -319,24 +263,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
         {!codeVerified && !verificationError && verificationCode.length < 6 && (
           <Button 
             type="button" 
-            onClick={() => {
-              if (verificationCode.trim() === "") {
-                setVerificationError("Please enter the verification code");
-                return;
-              }
-              
-              const isValid = verifyCode(verificationCode);
-              if (isValid) {
-                setCodeVerified(true);
-                setVerificationError("");
-                toast({
-                  title: "Email verified",
-                  description: "Your email has been successfully verified.",
-                });
-              } else {
-                setVerificationError("Invalid or expired code. Please try again.");
-              }
-            }}
+            onClick={handleVerifyCode}
             className="w-full py-6 text-base bg-black hover:bg-gray-800"
             disabled={isLoading}
           >
@@ -407,7 +334,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
                 </SelectTrigger>
                 <SelectContent>
                   {ussrCountryCodes.map((country) => (
-                    <SelectItem key={country.code === "+7 7" ? "kz" : country.code} value={country.code}>
+                    <SelectItem key={country.code} value={country.code}>
                       {country.code}
                     </SelectItem>
                   ))}
