@@ -52,7 +52,7 @@ const Footer = () => {
             </div>
             <p className="text-xs text-gray-600 mb-6">
               Indem Sie auf "Anmelden" klicken, bestätigen Sie, dass Sie unsere {" "}
-              <Link to="#" className="underline">Datenschutzerklärung</Link> gelesen und verstanden haben und dass Sie den Newsletter und andere Marketingmitteilungen, die darin beschrieben sind, erhalten möchten.
+              <Link to="#" className="underline">Newsletter und andere Marketingmitteilungen, die darin beschrieben sind, erhalten möchten.
             </p>
             
             <div className="flex space-x-4 mt-4">
@@ -95,7 +95,7 @@ const Footer = () => {
           {/* Services section */}
           <div className="md:col-span-1">
             <h3 className="text-sm font-bold uppercase mb-4">EXKLUSIVE SERVICES</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2 font-size: 12px;">
               <li><Link to="#" className="hover:underline">Prada Services</Link></li>
               <li><Link to="#" className="hover:underline">Ihre Bestellung verfolgen</Link></li>
               <li><Link to="#" className="hover:underline">Rückgaben</Link></li>
@@ -105,7 +105,7 @@ const Footer = () => {
           {/* Company section */}
           <div className="md:col-span-1">
             <h3 className="text-sm font-bold uppercase mb-4">UNTERNEHMEN</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2 font-size: 12px;">
               <li><Link to="#" className="hover:underline">Fondazione Prada</Link></li>
               <li><Link to="#" className="hover:underline">Prada Group</Link></li>
               <li><Link to="#" className="hover:underline">Luna Rossa</Link></li>
@@ -117,7 +117,7 @@ const Footer = () => {
           {/* Legal section */}
           <div className="md:col-span-1">
             <h3 className="text-sm font-bold uppercase mb-4">RECHTLICHE BEDINGUNGEN</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2 font-size: 12px;">
               <li><Link to="#" className="hover:underline">Impressum</Link></li>
               <li><Link to="#" className="hover:underline">Datenschutzerklärung</Link></li>
               <li><Link to="#" className="hover:underline">Cookie-Richtlinie</Link></li>
