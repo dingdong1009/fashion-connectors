@@ -1,7 +1,11 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Link } from "react-router-dom";
+
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [language, setLanguage] = useState<"EN" | "RU">("EN");
@@ -83,10 +87,26 @@ const Header = () => {
                 <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </button>
               
-              <a href="#" className="relative group text-xs tracking-wider transition-all duration-300 ease-in-out hover:text-gray-700">
-                CONNECT
-                <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-              </a>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="relative group text-xs tracking-wider transition-all duration-300 ease-in-out hover:text-gray-700 focus:outline-none">
+                  <span className="flex items-center">
+                    CONNECT
+                    <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                  </span>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="mt-2 bg-white z-50">
+                  <DropdownMenuItem asChild>
+                    <Link to="/auth?tab=signin" className="text-xs cursor-pointer px-4 py-2">
+                      LOG IN
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/auth?tab=signup" className="text-xs cursor-pointer px-4 py-2">
+                      REGISTER
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </nav>
         </div>
