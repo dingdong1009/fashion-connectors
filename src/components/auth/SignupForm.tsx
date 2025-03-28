@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -8,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Eye, EyeOff, Mail, RefreshCw } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { supabase } from "@/integrations/supabase/client";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -18,7 +16,7 @@ const ussrCountryCodes = [
   { code: "+374", name: "Armenia" },
   { code: "+994", name: "Azerbaijan" },
   { code: "+995", name: "Georgia" },
-  { code: "+7", name: "Kazakhstan" },
+  { code: "+7 7", name: "Kazakhstan" },
   { code: "+996", name: "Kyrgyzstan" },
   { code: "+371", name: "Latvia" },
   { code: "+370", name: "Lithuania" },
@@ -91,7 +89,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
         fullName,
         company,
         phoneNumber,
-        description // Pass the new description field
+        description
       );
       toast({
         title: "Account created",
@@ -259,23 +257,26 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
         
         {codeVerified && (
           <>
-            {/* Register as section moved to top */}
             <div className="space-y-3">
               <p className="font-medium">Register as</p>
-              <RadioGroup 
-                value={role} 
-                onValueChange={(value) => setRole(value as "brand" | "buyer")}
-                className="flex flex-col space-y-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="brand" id="brand" />
-                  <Label htmlFor="brand" className="font-normal cursor-pointer">Brand</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="buyer" id="buyer" />
-                  <Label htmlFor="buyer" className="font-normal cursor-pointer">Buyer</Label>
-                </div>
-              </RadioGroup>
+              <div className="grid grid-cols-2 gap-4">
+                <Button
+                  type="button"
+                  variant={role === "brand" ? "default" : "outline"}
+                  onClick={() => setRole("brand")}
+                  className={`py-6 ${role === "brand" ? "bg-black hover:bg-gray-800" : ""}`}
+                >
+                  Brand
+                </Button>
+                <Button
+                  type="button"
+                  variant={role === "buyer" ? "default" : "outline"}
+                  onClick={() => setRole("buyer")}
+                  className={`py-6 ${role === "buyer" ? "bg-black hover:bg-gray-800" : ""}`}
+                >
+                  Buyer
+                </Button>
+              </div>
             </div>
             
             <Select>
