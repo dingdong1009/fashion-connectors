@@ -77,15 +77,9 @@ const Header = () => {
                   <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                 </a>
               </li>
-              <li>
-                <a href="#" className="relative group hover:text-gray-700 transition-colors duration-200">
-                  CONNECT
-                  <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-                </a>
-              </li>
             </ul>
             
-            <div className="flex items-center">
+            <div className="flex items-center space-x-6">
               <button 
                 onClick={toggleLanguage}
                 className="relative group text-xs tracking-wider px-2 transition-all duration-300 ease-in-out hover:text-gray-700"
@@ -98,6 +92,11 @@ const Header = () => {
                 </span>
                 <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
               </button>
+              
+              <a href="#" className="relative group text-xs tracking-wider transition-all duration-300 ease-in-out hover:text-gray-700">
+                CONNECT
+                <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+              </a>
             </div>
           </nav>
         </div>
