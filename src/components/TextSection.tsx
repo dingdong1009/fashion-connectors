@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 
 const TextSection = () => {
   return (
-    <div className="mx-auto max-w-[1481px] px-6 py-16">
+    <div className="mx-auto max-w-[1481px] py-16">
       <div className="mx-auto max-w-4xl text-center">
         <h2 className="mb-8 text-3xl font-light">Our Vision</h2>
         <Separator className="mx-auto mb-8 w-24" />
