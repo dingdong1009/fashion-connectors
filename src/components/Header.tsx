@@ -21,7 +21,7 @@ const Header = () => {
     <header className={`w-full fixed top-0 left-0 right-0 z-50 bg-background transition-all duration-300 ${isScrolled ? 'shadow-md' : ''}`}>
       <div className="mx-auto flex max-w-[1481px] flex-col border-b">
         {/* Top row with logo and user icon */}
-        <div className="flex items-center justify-between py-8 px-6">
+        <div className="flex items-center justify-between py-8">
           <div className="h-10">
             <img 
               src="/lovable-uploads/062d0258-dcd0-4f16-a095-956d0ec0e2d4.png" 
