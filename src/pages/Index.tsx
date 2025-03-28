@@ -6,7 +6,7 @@ import CategorySection from "@/components/CategorySection";
 import CallToAction from "@/components/CallToAction";
 import Footer from "@/components/Footer";
 
-const heroImage = "public/lovable-uploads/b4db7bcb-d45d-4899-bb00-e69e9eaed901.png";
+const heroImage = "https://www.prada.com/content/dam/pradanux/e-commerce/2025/02/Re-Nylon/Landing/Mosaic/1/Mosaic_landscape_DT.jpg";
 
 const Index = () => {
   return (
