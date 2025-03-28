@@ -106,45 +106,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Checking if email exists:", email);
       
-      // Try a simple auth check first
-      const { data, error } = await supabase.auth.signInWithOtp({
+      // Try a fake password sign-in to see if user exists
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
-        options: {
-          shouldCreateUser: false,
-        }
+        password: "checking_if_user_exists_only"
       });
       
-      // If there's an error with specific messaging about user not found
-      if (error) {
-        if (error.message.includes("not found") || 
-            error.message.toLowerCase().includes("user not found") ||
-            error.message.toLowerCase().includes("user doesn't exist")) {
-          console.log("Email doesn't exist based on error message");
-          return false;
-        }
-        
-        // For other errors, we can try a different approach
-        if (error.status === 422 && error.message.includes("otp_disabled")) {
-          console.log("OTP is disabled, trying password check");
-          
-          // Try a fake password sign-in to see if user exists
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email,
-            password: "checking_if_user_exists_only"
-          });
-          
-          if (signInError) {
-            // If error says "Invalid login credentials", it means user exists but password is wrong
-            // If error says "User not found" or similar, user doesn't exist
-            const userExists = signInError.message.includes("Invalid login credentials");
-            console.log("Email exists check result:", userExists);
-            return userExists;
-          }
-        }
+      if (signInError) {
+        // If error says "Invalid login credentials", it means user exists but password is wrong
+        // If error says "User not found" or similar, user doesn't exist
+        const userExists = signInError.message.includes("Invalid login credentials");
+        console.log("Email exists check result:", userExists);
+        console.log("Error message:", signInError.message);
+        return userExists;
       }
       
-      // By default, return false if we couldn't conclusively determine
-      return false;
+      // If no error (unlikely in this case), user must exist
+      return true;
     } catch (error) {
       console.error("Error checking email:", error);
       return false;
@@ -188,6 +166,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       console.log("Signing up user with role:", role);
+      console.log("Full signup data:", { email, role, fullName, company, telephone, description });
       
       // First, check if we can create the user in auth system
       const { data, error } = await supabase.auth.signUp({
@@ -203,6 +182,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (error) {
         console.error("Signup error:", error);
+        console.error("Error details:", {
+          message: error.message,
+          status: error.status,
+          name: error.name,
+        });
         toast({
           title: "Signup failed",
           description: error.message,
@@ -211,6 +195,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw error;
       }
       
+      console.log("Signup auth response:", data);
       console.log("Signup successful, user created:", data.user?.id);
       
       // The database trigger should auto-create the profile,
@@ -218,7 +203,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data.user) {
         try {
           console.log("Updating additional profile fields");
-          const { error: profileError } = await supabase
+          const { error: profileError, data: profileData } = await supabase
             .from('profiles')
             .update({
               company,
@@ -227,8 +212,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             })
             .eq('id', data.user.id);
           
+          console.log("Profile update response:", profileData);
+          
           if (profileError) {
             console.error("Error updating profile fields:", profileError);
+            console.error("Profile error details:", {
+              message: profileError.message,
+              code: profileError.code,
+              details: profileError.details,
+              hint: profileError.hint
+            });
             // Continue as the basic profile was created
           } else {
             console.log("Profile updated successfully");
@@ -245,6 +238,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
     } catch (error: any) {
       console.error("Error signing up:", error.message);
+      console.error("Full error object:", error);
+      
+      // Additional error reporting for debugging
+      if (error.status) {
+        console.error("Error status:", error.status);
+      }
+      
+      if (error.code) {
+        console.error("Error code:", error.code);
+      }
+      
+      toast({
+        title: "Error creating account",
+        description: error.message || "An error occurred during sign up. Please try again later.",
+        variant: "destructive"
+      });
+      
       throw error;
     } finally {
       setLoading(false);

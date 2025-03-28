@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -18,11 +19,17 @@ serve(async (req) => {
   }
 
   try {
+    console.log("Received verification email request");
+    
     // Parse request body
-    const { email, verificationCode, resend } = await req.json() as VerificationEmailRequest;
+    const body = await req.json();
+    console.log("Request body:", body);
+    
+    const { email, verificationCode, resend } = body as VerificationEmailRequest;
 
     // Validate request data
     if (!email || !verificationCode) {
+      console.log("Missing required fields:", { email, verificationCode });
       return new Response(
         JSON.stringify({ error: 'Email and verification code are required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -49,7 +56,6 @@ serve(async (req) => {
     }
 
     // In production with a real API key, we would use Resend to send the email
-    // This is a placeholder for when you add the actual email sending logic
     console.log(`Sending verification code to ${email}: ${verificationCode}`);
 
     // Return success response
@@ -68,8 +74,18 @@ serve(async (req) => {
   } catch (error) {
     console.error("Error processing request:", error);
     
+    // Add more detailed error logging
+    if (error instanceof Error) {
+      console.error("Error name:", error.name);
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+    
     return new Response(
-      JSON.stringify({ error: 'Failed to process request' }),
+      JSON.stringify({ 
+        error: 'Failed to process request',
+        details: error instanceof Error ? error.message : String(error)
+      }),
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
