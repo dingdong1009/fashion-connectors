@@ -4,6 +4,7 @@ import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
+// Define the user role type as an enum to match database
 type UserRole = "admin" | "sales_manager" | "brand" | "buyer";
 
 interface Profile {
@@ -48,6 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
+        console.log("Auth state changed:", event, currentSession?.user?.id);
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
@@ -62,6 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      console.log("Existing session check:", currentSession?.user?.id);
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
@@ -88,6 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error("Error fetching user profile:", error);
         setProfile(null);
       } else {
+        console.log("Profile fetched:", data);
         setProfile(data as Profile);
       }
     } catch (error) {
@@ -100,54 +104,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Checking if email exists:", email);
       
-      // First, try to get user by email (admin-only in Supabase)
       // For non-admin clients, we'll use a sign-in attempt to check
-      const { data, error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        options: {
-          shouldCreateUser: false, // Don't create user if they don't exist
-        }
+        password: "this_is_definitely_not_the_password" // Fake password to force an error
       });
       
-      console.log("Email check response:", data, error);
-      
-      // If there's an error with a specific message about user not found
-      // or if the error is about OTP being disabled, we need to check the error type
+      console.log("Password check response:", error);
       
       if (error) {
-        if (error.message.includes("not found") || 
-            error.message.toLowerCase().includes("user not found") ||
-            error.message.toLowerCase().includes("user doesn't exist")) {
-          console.log("Email doesn't exist based on error message:", email);
-          return false;
-        }
-        
-        // For OTP disabled errors, we need to check for a more specific status code
-        if (error.status === 422 && error.message.includes("otp_disabled")) {
-          // This means OTP is disabled, but we still need to know if the user exists
-          
-          // If OTP is disabled but the user exists, we typically get a successful response
-          // or a different error message. Otherwise, we'd get a specific "user not found" error.
-          // Let's try to sign in with a fake password to see if the user exists
-          
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email,
-            password: "this_is_definitely_not_the_password" // Fake password to force an error
-          });
-          
-          if (signInError) {
-            // If error says "Invalid login credentials", it means user exists but password is wrong
-            // If error says "User not found" or similar, user doesn't exist
-            const userExists = signInError.message.includes("Invalid login credentials");
-            console.log("Email exists (password check):", userExists, email);
-            return userExists;
-          }
-        }
+        // If error says "Invalid login credentials", it means user exists but password is wrong
+        // If error says "User not found" or similar, user doesn't exist
+        const userExists = error.message.includes("Invalid login credentials");
+        console.log("Email exists (password check):", userExists, email);
+        return userExists;
       }
       
-      // If we got here without returning, assume the email exists
-      console.log("Email likely exists (default case):", email);
-      return false; // Default to false since our checks didn't conclusively find the user
+      // If we get here without an error (very unlikely), assume user exists
+      return true;
     } catch (error) {
       console.error("Error checking email:", error);
       throw error;
