@@ -15,7 +15,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 py-4 px-6 md:px-12 shadow-sm transition-all duration-300">
+    <header className="sticky top-0 z-50 bg-white py-4 px-6 md:px-12 shadow-sm transition-all duration-300">
       <div className="container mx-auto max-w-[1481px] flex flex-col">
         {/* Top row with logo and user icon */}
         <div className="flex items-center justify-between mb-6">
@@ -51,6 +51,10 @@ const Header = () => {
             </ul>
           </nav>
         </div>
+      </div>
+      {/* Bottom border with max width */}
+      <div className="w-full mx-auto flex justify-center border-b border-gray-200">
+        <div className="w-full max-w-[1481px]"></div>
       </div>
     </header>
   );
