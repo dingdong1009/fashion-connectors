@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -35,22 +34,19 @@ const Auth = () => {
       console.log("Checking email existence:", submittedEmail);
       
       // Check if email exists in Supabase
-      const result = await checkEmailExists(submittedEmail);
-      console.log("Email exists check result:", result);
+      const emailExists = await checkEmailExists(submittedEmail);
+      console.log("Final email exists determination:", emailExists);
       
-      if (result === true) {
+      if (emailExists) {
         // User exists, go to login
         console.log("User exists, moving to login step");
         setStep("login");
-      } else if (result === false) {
+      } else {
         // User doesn't exist, send verification code and go to signup
         console.log("User doesn't exist, sending verification code");
         const verificationCode = await sendVerificationEmail(submittedEmail);
         setCurrentVerificationCode(verificationCode);
         setStep("signup");
-      } else {
-        // Error occurred during check
-        throw new Error("Could not verify email existence. Please try again.");
       }
     } catch (error: any) {
       console.error("Error checking email:", error);

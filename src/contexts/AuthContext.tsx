@@ -102,27 +102,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Checking if email exists:", email);
       
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data: userData, error: userError } = await supabase.auth.admin
+        .getUserByEmail(email);
+      
+      if (!userError && userData) {
+        console.log("User found directly:", userData);
+        return true;
+      }
+      
+      console.log("Using sign-in method to check email existence");
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password: "checking_if_user_exists_only"
       });
       
       if (error) {
         const errorMessageLower = error.message.toLowerCase();
-        const userExists = 
-          errorMessageLower.includes("invalid login credentials") || 
-          errorMessageLower.includes("email not confirmed");
         
-        console.log("Email exists check result:", userExists);
-        console.log("Error message:", error.message);
-        return userExists;
+        if (errorMessageLower.includes("invalid login credentials") || 
+            errorMessageLower.includes("email not confirmed")) {
+          console.log("Email exists check result: true");
+          console.log("Error indicates user exists:", error.message);
+          return true;
+        }
+        
+        console.log("Email exists check result: false");
+        console.log("Error indicates user doesn't exist:", error.message);
+        return false;
       }
       
       console.log("No error returned, user must exist");
       return true;
     } catch (error) {
       console.error("Unexpected error checking email:", error);
-      throw new Error("Failed to check if email exists. Please try again.");
+      console.log("Defaulting to 'email does not exist' after error");
+      return false;
     }
   };
 
@@ -216,13 +230,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               details: profileError.details,
               hint: profileError.hint
             });
-            // Continue as the basic profile was created
           } else {
             console.log("Profile updated successfully");
           }
         } catch (profileError) {
           console.error("Exception updating profile:", profileError);
-          // Continue as the basic profile was created
         }
       }
       
