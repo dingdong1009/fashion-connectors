@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
@@ -32,6 +32,14 @@ const SignupForm = ({ email, onEditEmail, verifyCode }: SignupFormProps) => {
   const [verificationError, setVerificationError] = useState("");
   const { signUp } = useAuth();
   const { toast } = useToast();
+  const verificationInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-focus on the verification code input when component mounts
+  useEffect(() => {
+    if (verificationInputRef.current) {
+      verificationInputRef.current.focus();
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -140,6 +148,27 @@ const SignupForm = ({ email, onEditEmail, verifyCode }: SignupFormProps) => {
     }
   };
 
+  // Auto-verify the code when it reaches 6 digits
+  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const code = e.target.value;
+    setVerificationCode(code);
+    
+    // When the code is 6 digits long, automatically try to verify it
+    if (code.length === 6 && !codeVerified) {
+      const isValid = verifyCode(code);
+      if (isValid) {
+        setCodeVerified(true);
+        setVerificationError("");
+        toast({
+          title: "Email verified",
+          description: "Your email has been successfully verified.",
+        });
+      } else {
+        setVerificationError("Invalid or expired code. Please try again.");
+      }
+    }
+  };
+
   return (
     <div className="relative w-full justify-center mt-28">
       <h1 className="text-2xl font-semibold mb-2">Create your personal account</h1>
@@ -171,9 +200,11 @@ const SignupForm = ({ email, onEditEmail, verifyCode }: SignupFormProps) => {
             id="verification"
             placeholder="Verification code *"
             value={verificationCode}
-            onChange={(e) => setVerificationCode(e.target.value)}
+            onChange={handleCodeChange}
             className={`pr-10 py-6 text-base ${verificationError ? "border-red-500" : ""}`}
             disabled={codeVerified}
+            ref={verificationInputRef}
+            maxLength={6}
           />
           <button
             type="button"
@@ -190,7 +221,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode }: SignupFormProps) => {
           <p className="text-xs mt-1">The code will expire in 10 minutes</p>
         </div>
         
-        {!codeVerified && (
+        {!codeVerified && !verificationError && verificationCode.length < 6 && (
           <Button 
             type="button" 
             onClick={handleVerifyCode}

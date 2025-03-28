@@ -37,7 +37,7 @@ const Auth = () => {
         // User exists, go to login
         setStep("login");
       } else {
-        // User doesn't exist, send verification code and go to signup
+        // User doesn't exist, send verification code and go directly to signup
         await sendVerificationEmail(submittedEmail);
         setStep("signup");
       }
