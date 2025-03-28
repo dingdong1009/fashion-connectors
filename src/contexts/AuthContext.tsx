@@ -98,7 +98,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkEmailExists = async (email: string): Promise<boolean> => {
     try {
-      const { error } = await supabase.auth.signInWithOtp({
+      // We'll use a more direct approach to check if the email exists
+      const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: false,
@@ -110,7 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return false; // Email doesn't exist
       }
       
-      return true; // Email exists
+      return true; // Email exists or we couldn't determine for sure
     } catch (error) {
       console.error("Error checking email:", error);
       throw error;
