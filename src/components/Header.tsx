@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 
 const Header = () => {
   return (
-    <header className="w-full border-b">
-      <div className="mx-auto flex max-w-[1481px] flex-col">
+    <header className="w-full">
+      <div className="mx-auto flex max-w-[1481px] flex-col border-b">
         {/* Top row with logo and user icon */}
         <div className="flex items-center justify-between py-8 px-6">
           <h1 className="text-2xl font-light">MoiLoi</h1>

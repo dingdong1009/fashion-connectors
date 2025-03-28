@@ -3,8 +3,8 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="mt-16 w-full border-t pt-12 pb-4">
-      <div className="mx-auto max-w-[1481px] px-6">
+    <footer className="mt-16 w-full">
+      <div className="mx-auto max-w-[1481px] border-t pt-12 pb-4 px-6">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-5">
           {/* Newsletter */}
           <div className="md:col-span-1">
