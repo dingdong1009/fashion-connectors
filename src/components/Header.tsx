@@ -49,25 +49,25 @@ const Header = () => {
               </li>
               <li>
                 <a href="#" className="relative group hover:text-gray-700 transition-colors duration-200">
-                  COLLECTIONS
+                  SOLUTIONS
                   <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                 </a>
               </li>
               <li>
                 <a href="#" className="relative group hover:text-gray-700 transition-colors duration-200">
-                  SUSTAINABILITY
+                  RESOURCES
                   <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                 </a>
               </li>
               <li>
                 <a href="#" className="relative group hover:text-gray-700 transition-colors duration-200">
-                  TRADE SHOWS
+                  SHOWROOMS
                   <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                 </a>
               </li>
               <li>
                 <a href="#" className="relative group hover:text-gray-700 transition-colors duration-200">
-                  MARKETPLACE
+                  CURATED
                   <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                 </a>
               </li>
