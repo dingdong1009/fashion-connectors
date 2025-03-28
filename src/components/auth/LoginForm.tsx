@@ -52,7 +52,7 @@ const LoginForm = ({ email, onEditEmail }: LoginFormProps) => {
   };
 
   return (
-    <div>
+    <div className="relative w-full justify-center mt-28">
       <h1 className="text-2xl font-semibold mb-6">Login</h1>
       
       <div className="bg-gray-50 p-4 rounded-md mb-8">
