@@ -1,11 +1,9 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, User, Heart, ShoppingBag } from "lucide-react";
+import { User } from "lucide-react";
 
 const Header = () => {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-
   const menuItems = [
     { label: "BRANDS", path: "/brands" },
     { label: "BUYERS", path: "/buyers" },
@@ -44,35 +42,12 @@ const Header = () => {
           </nav>
         </div>
         
-        <div className="flex items-center space-x-4">
-          <button 
-            onClick={() => setIsSearchOpen(!isSearchOpen)}
-            className="p-1"
-          >
-            <Search size={20} />
-          </button>
+        <div className="flex items-center">
           <Link to="/account" className="p-1">
             <User size={20} />
           </Link>
-          <Link to="/favorites" className="p-1">
-            <Heart size={20} />
-          </Link>
-          <Link to="/cart" className="p-1">
-            <ShoppingBag size={20} />
-          </Link>
         </div>
       </div>
-      
-      {isSearchOpen && (
-        <div className="container mx-auto max-w-[1481px] mt-4 transition-all duration-300">
-          <input
-            type="text"
-            placeholder="Search brands, products..."
-            className="w-full border-b border-gray-300 p-2 outline-none"
-            autoFocus
-          />
-        </div>
-      )}
     </header>
   );
 };
