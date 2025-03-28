@@ -143,7 +143,7 @@ const Footer = () => {
         
         <Separator className="mb-6" />
         
-        <div className="text-xs text-gray-500">
+        <div className="text-xxs text-gray-500">
           <p>©PRADA 2007 - {currentYear} | VAT no. 105.818.936</p>
         </div>
       </div>
