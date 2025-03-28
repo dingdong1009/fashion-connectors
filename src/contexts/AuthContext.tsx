@@ -152,6 +152,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const ensureDbSetup = async () => {
+    try {
+      // Call the edge function to ensure the database is set up
+      const { data, error } = await supabase.functions.invoke('ensure-profiles-table');
+      
+      if (error) {
+        console.error("Error calling ensure-profiles-table:", error);
+        return false;
+      }
+      
+      console.log("Database setup response:", data);
+      return true;
+    } catch (error) {
+      console.error("Exception in ensureDbSetup:", error);
+      return false;
+    }
+  };
+
   const signUp = async (
     email: string, 
     password: string, 
@@ -166,20 +184,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log("Signing up user with role:", role);
       console.log("Full signup data:", { email, role, fullName, company, telephone, description });
       
-      // First check if the profiles table exists to prevent registration errors
-      const { error: tableCheckError } = await supabase
-        .from('profiles')
-        .select('id')
-        .limit(1);
-      
-      if (tableCheckError) {
-        console.error("Profiles table check error:", tableCheckError);
-        toast({
-          title: "Signup failed",
-          description: "Database setup issue. Please contact support.",
-          variant: "destructive"
-        });
-        throw new Error("Database setup issue. Please contact support.");
+      // First ensure the database is set up
+      const dbSetupComplete = await ensureDbSetup();
+      if (!dbSetupComplete) {
+        throw new Error("Database setup issue. Please try again later.");
       }
       
       // Proceed with signup
@@ -200,11 +208,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           message: error.message,
           status: error.status,
           name: error.name,
-        });
-        toast({
-          title: "Signup failed",
-          description: error.message,
-          variant: "destructive"
         });
         throw error;
       }

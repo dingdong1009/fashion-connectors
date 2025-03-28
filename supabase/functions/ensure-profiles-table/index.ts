@@ -20,49 +20,31 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    console.log("Checking for profiles table...");
-
-    // Execute a query to check if the profiles table exists
-    const { data, error } = await supabase.from("profiles").select("id").limit(1);
-
-    if (error) {
-      console.error("Error checking profiles table:", error);
-      
-      if (error.message.includes("relation \"profiles\" does not exist")) {
-        // Create the necessary SQL to set up the profiles table and trigger
-        console.log("Profiles table doesn't exist, creating it...");
-        
-        // Create user_role enum if it doesn't exist
-        const { error: enumError } = await supabase.rpc("create_user_role_enum");
-        if (enumError) {
-          console.error("Error creating user_role enum:", enumError);
-        }
-        
-        // Create profiles table
-        const { error: tableError } = await supabase.rpc("create_profiles_table");
-        if (tableError) {
-          console.error("Error creating profiles table:", tableError);
-          return new Response(
-            JSON.stringify({ error: "Failed to create profiles table" }),
-            {
-              status: 500,
-              headers: { ...corsHeaders, "Content-Type": "application/json" },
-            }
-          );
-        }
-        
-        console.log("Profiles table created successfully");
-        return new Response(
-          JSON.stringify({ message: "Profiles table created successfully" }),
-          {
-            status: 200,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
-        );
-      }
-      
+    console.log("Checking for user_role enum...");
+    
+    // First check if user_role enum exists
+    const { error: enumCheckError } = await supabase.rpc("create_user_role_enum");
+    if (enumCheckError) {
+      console.error("Error checking/creating user_role enum:", enumCheckError);
       return new Response(
-        JSON.stringify({ error: error.message }),
+        JSON.stringify({ error: "Failed to create user_role enum: " + enumCheckError.message }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+    
+    console.log("User_role enum checked/created successfully");
+
+    console.log("Checking for profiles table...");
+    
+    // Then check/create the profiles table
+    const { error: tableError } = await supabase.rpc("create_profiles_table");
+    if (tableError) {
+      console.error("Error creating profiles table:", tableError);
+      return new Response(
+        JSON.stringify({ error: "Failed to create profiles table: " + tableError.message }),
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -70,9 +52,9 @@ serve(async (req) => {
       );
     }
 
-    console.log("Profiles table exists:", data);
+    console.log("Profiles table checked/created successfully");
     return new Response(
-      JSON.stringify({ message: "Profiles table exists", data }),
+      JSON.stringify({ message: "Database setup completed successfully" }),
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

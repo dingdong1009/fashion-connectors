@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -42,6 +43,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
   const [phoneNumber, setPhoneNumber] = useState("");
   const [company, setCompany] = useState("");
   const [description, setDescription] = useState("");
+  const [title, setTitle] = useState<string>("mr");
   const [role, setRole] = useState<"brand" | "buyer">("buyer");
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +60,24 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
       verificationInputRef.current.focus();
     }
   }, []);
+
+  const ensureDbSetup = async () => {
+    try {
+      // Call the edge function to ensure the database is set up
+      const { data, error } = await supabase.functions.invoke('ensure-profiles-table');
+      
+      if (error) {
+        console.error("Error calling ensure-profiles-table:", error);
+        return false;
+      }
+      
+      console.log("Database setup response:", data);
+      return true;
+    } catch (error) {
+      console.error("Exception in ensureDbSetup:", error);
+      return false;
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,6 +101,18 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
 
     try {
       setIsLoading(true);
+      
+      // First ensure the database is set up properly
+      const dbSetupComplete = await ensureDbSetup();
+      if (!dbSetupComplete) {
+        toast({
+          title: "System setup error",
+          description: "There was an error setting up the database. Please try again later.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const fullName = `${firstName} ${lastName}`;
       const fullPhoneNumber = phoneNumber ? `${countryCode}${phoneNumber}` : "";
       
@@ -91,23 +123,9 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
         fullName,
         company,
         fullPhoneNumber,
-        description
+        description,
+        title
       });
-      
-      const { error: tableCheckError } = await supabase
-        .from('profiles')
-        .select('id')
-        .limit(1);
-      
-      if (tableCheckError) {
-        console.error("Profiles table check error:", tableCheckError);
-        toast({
-          title: "System error",
-          description: "There was an error with the database setup. Please try again later or contact support.",
-          variant: "destructive",
-        });
-        return;
-      }
       
       await signUp(
         email, 
@@ -308,7 +326,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
               </div>
             </div>
             
-            <Select>
+            <Select value={title} onValueChange={setTitle}>
               <SelectTrigger className="py-6 text-base">
                 <SelectValue placeholder="Select title *" />
               </SelectTrigger>
