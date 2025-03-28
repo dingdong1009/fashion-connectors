@@ -17,7 +17,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="border-b border-gray-200 py-4 px-6 md:px-12">
+    <header className="border-b max-w-[1481px] border-gray-200 py-4 px-6 md:px-12">
       <div className="container mx-auto max-w-[1481px] flex items-center justify-between">
         <div className="flex items-center">
           <Link to="/" className="mr-16">
@@ -68,7 +68,7 @@ const Header = () => {
           <input
             type="text"
             placeholder="Search brands, products..."
-            className="w-full border-b border-gray-300 p-2 outline-none"
+            className="w-full border-b max-w-[1481px] border-gray-300 p-2 outline-none"
             autoFocus
           />
         </div>
