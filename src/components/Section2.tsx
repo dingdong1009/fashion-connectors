@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 const Section2 = () => {
   return (
-    <div className="mx-auto max-w-[1481px] px-6 py-16">
+    <div className="mx-auto max-w-[1481px] py-16">
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div className="relative">
           <img
