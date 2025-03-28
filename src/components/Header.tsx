@@ -6,6 +6,7 @@ import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuL
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [language, setLanguage] = useState<"EN" | "RU">("EN");
 
   // Track scroll position to apply different styles for sticky header
   useEffect(() => {
@@ -16,6 +17,10 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const toggleLanguage = () => {
+    setLanguage(prev => prev === "EN" ? "RU" : "EN");
+  };
 
   return (
     <header className={`w-full fixed top-0 left-0 right-0 z-50 bg-background transition-all duration-300 ${isScrolled ? 'shadow-md' : ''}`}>
@@ -29,28 +34,11 @@ const Header = () => {
               className="h-full" 
             />
           </div>
-          <Button variant="ghost" size="icon" className="rounded-full hover:scale-105 transition-transform">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M18 20a6 6 0 0 0-12 0" />
-              <circle cx="12" cy="10" r="4" />
-            </svg>
-            <span className="sr-only">User account</span>
-          </Button>
         </div>
 
         {/* Bottom row with navigation */}
         <div className="mx-auto w-full max-w-[1481px] border-t">
-          <nav className="mx-auto flex max-w-[1481px] justify-start py-4">
+          <nav className="mx-auto flex max-w-[1481px] justify-between py-4">
             <ul className="flex space-x-8 text-xs">
               <li>
                 <a href="#" className="relative group hover:text-gray-700 transition-colors duration-200">
@@ -95,6 +83,47 @@ const Header = () => {
                 </a>
               </li>
             </ul>
+            
+            <div className="flex items-center space-x-6">
+              {/* Language Selector */}
+              <button 
+                onClick={toggleLanguage}
+                className="relative group text-xs hover:text-gray-700 transition-all duration-300 ease-in-out"
+              >
+                <span className="transition-opacity duration-500 ease-in-out">
+                  {language === "EN" ? (
+                    <span className="inline-block relative">
+                      EN
+                      <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                    </span>
+                  ) : (
+                    <span className="inline-block relative">
+                      RU
+                      <span className="absolute inset-x-0 -bottom-2 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                    </span>
+                  )}
+                </span>
+              </button>
+              
+              {/* User icon */}
+              <Button variant="ghost" size="icon" className="rounded-full hover:scale-105 transition-transform">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M18 20a6 6 0 0 0-12 0" />
+                  <circle cx="12" cy="10" r="4" />
+                </svg>
+                <span className="sr-only">User account</span>
+              </Button>
+            </div>
           </nav>
         </div>
       </div>
