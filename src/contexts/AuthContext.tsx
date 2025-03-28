@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -103,7 +102,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Checking if email exists:", email);
       
-      // Try to sign in with an intentionally wrong password to see if the user exists
+      const { data: userData, error: userError } = await supabase.auth.admin
+        .getUserByEmail(email);
+      
+      if (!userError && userData) {
+        console.log("User found directly:", userData);
+        return true;
+      }
+      
+      console.log("Using sign-in method to check email existence");
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password: "checking_if_user_exists_only"

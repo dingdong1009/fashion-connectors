@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -59,19 +60,6 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
     }
   }, []);
 
-  useEffect(() => {
-    const ensureProfilesTable = async () => {
-      try {
-        const response = await supabase.functions.invoke('create-profiles-table');
-        console.log("Profile table check response:", response);
-      } catch (error) {
-        console.error("Failed to check profiles table:", error);
-      }
-    };
-
-    ensureProfilesTable();
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!codeVerified) {
@@ -97,6 +85,7 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
       const fullName = `${firstName} ${lastName}`;
       const fullPhoneNumber = phoneNumber ? `${countryCode}${phoneNumber}` : "";
       
+      // Log the data being passed to signUp
       console.log("Signup data:", {
         email,
         password,
@@ -123,23 +112,9 @@ const SignupForm = ({ email, onEditEmail, verifyCode, testCode }: SignupFormProp
       });
     } catch (error: any) {
       console.error("Signup error:", error);
-      
-      let errorMessage = error.message || "An error occurred during sign up.";
-      
-      if (error.message && error.message.includes("user_role")) {
-        errorMessage = "There was an issue with the user role. Please try again or contact support.";
-        
-        try {
-          await supabase.functions.invoke('create-profiles-table');
-          errorMessage += " We've attempted to fix the issue. Please try again.";
-        } catch (fixError) {
-          console.error("Failed to fix profiles table:", fixError);
-        }
-      }
-      
       toast({
         title: "Error creating account",
-        description: errorMessage,
+        description: error.message || "An error occurred during sign up.",
         variant: "destructive",
       });
     } finally {
