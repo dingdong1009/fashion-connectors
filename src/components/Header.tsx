@@ -1,9 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
-
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -12,40 +10,17 @@ const Header = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
     };
-    
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  return (
-    <header className={`w-full fixed top-0 left-0 right-0 z-50 bg-background transition-all duration-300 ${isScrolled ? 'shadow-md' : ''}`}>
+  return <header className={`w-full fixed top-0 left-0 right-0 z-50 bg-background transition-all duration-300 ${isScrolled ? 'shadow-md' : ''}`}>
       <div className="mx-auto flex max-w-[1481px] flex-col border-b">
         {/* Top row with logo and user icon */}
         <div className="flex items-center justify-between py-8">
           <div className="h-10">
-            <img 
-              src="/lovable-uploads/062d0258-dcd0-4f16-a095-956d0ec0e2d4.png" 
-              alt="MoiLoi Logo" 
-              className="h-full" 
-            />
+            <img src="/lovable-uploads/062d0258-dcd0-4f16-a095-956d0ec0e2d4.png" alt="MoiLoi Logo" className="h-full" />
           </div>
-          <Button variant="ghost" size="icon" className="rounded-full hover:scale-105 transition-transform">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M18 20a6 6 0 0 0-12 0" />
-              <circle cx="12" cy="10" r="4" />
-            </svg>
-            <span className="sr-only">User account</span>
-          </Button>
+          
         </div>
 
         {/* Bottom row with navigation */}
@@ -98,8 +73,6 @@ const Header = () => {
           </nav>
         </div>
       </div>
-    </header>
-  );
+    </header>;
 };
-
 export default Header;
