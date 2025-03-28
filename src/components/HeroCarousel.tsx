@@ -17,8 +17,8 @@ const HeroCarousel = () => {
           <CarouselItem>
             <div className="relative h-[600px] w-full">
               <img
-                src="/lovable-uploads/7a1f2a4e-7130-4dc5-ac94-bb8fb1329102.png"
-                alt="Prada Re-Nylon for SEA BEYOND"
+                src="https://www.prada.com/content/dam/pradanux/e-commerce/2025/02/Re-Nylon/Landing/Mosaic/1/Mosaic_landscape_DT.jpg"
+                alt="Test"
                 className="h-full w-full object-cover"
               />
               <div className="absolute left-12 top-12 text-white">
@@ -35,7 +35,7 @@ const HeroCarousel = () => {
           <CarouselItem>
             <div className="relative h-[600px] w-full">
               <img
-                src="/lovable-uploads/7a1f2a4e-7130-4dc5-ac94-bb8fb1329102.png"
+                src="https://www.prada.com/content/dam/pradanux/e-commerce/2025/02/Re-Nylon/Landing/Mosaic/1/Mosaic_landscape_DT.jpg"
                 alt="Prada Collection"
                 className="h-full w-full object-cover"
               />
