@@ -8,7 +8,7 @@
 
 /* Add padding to body for fixed header */
 body {
-  padding-top: 150px; /* Adjust based on your header height */
+  padding-top: 170px; /* Adjusted for header height */
 }
 
 .logo {
