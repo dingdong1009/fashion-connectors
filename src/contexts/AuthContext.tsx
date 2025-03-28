@@ -122,6 +122,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   ) => {
     try {
       setLoading(true);
+      // Make sure we're passing the correct metadata structure 
       const { error } = await supabase.auth.signUp({
         email,
         password,
