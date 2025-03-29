@@ -13,10 +13,10 @@ const Section2 = () => {
             className="h-full w-full object-cover"
           />
           <div className="absolute left-8 top-8 text-white">
-            <h2 className="text-2xl font-light">Be In The Center of the Light</h2>
+            <h2 className="text-2xl font-light">Prada Re-Nylon for SEA BEYOND</h2>
             <Button 
               variant="outline" 
-              className="mt-4 border-white text-black hover:bg-white hover:text-grey"
+              className="mt-4 border-white text-white hover:bg-white hover:text-black"
             >
               ENTDECKEN
             </Button>
