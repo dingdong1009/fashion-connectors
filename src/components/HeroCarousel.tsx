@@ -16,7 +16,7 @@ const HeroCarousel = () => {
             <h2 className="text-2xl font-light">Prada Re-Nylon for SEA BEYOND</h2>
             <Button 
               variant="outline" 
-              className="mt-4 border-white text-white hover:bg-white hover:text-black"
+              className="mt-4 border-white text-black hover:bg-white hover:text-grey"
             >
               ENTDECKEN
             </Button>
